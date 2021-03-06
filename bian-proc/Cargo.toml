@@ -1,0 +1,15 @@
+[package]
+name = "bian-proc"
+version = "0.1.0"
+authors = ["PrivateRookie <996514515@qq.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "1", features = ["extra-traits"] }
+quote = "1"
+proc-macro2 = "1"
