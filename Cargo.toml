@@ -18,8 +18,8 @@ dotenv = "0.15.0"
 hex = "0.4.3"
 sha2 = "0.9.3"
 chrono = { version = "0.4", features = ["serde"] }
-bian-proc = { path = "./bian-proc" }
-bian-core = { path = "./bian-core" }
+bian-proc = { path = "./bian-proc", version = "0.1" }
+bian-core = { path = "./bian-core", version = "0.1" }
 
 [workspace]
 members = [".", "./bian-proc", "./bian-core"]

@@ -1,5 +1,5 @@
-use bian_core::error::APIError;
-use bian_proc::impl_api;
+use bian_core::{error::APIError, BianResult};
+use bian_proc::api;
 use hmac::{Hmac, Mac, NewMac};
 use sha2::Sha256;
 
@@ -32,21 +32,17 @@ impl Client {
         signature
     }
 
-    impl_api!(
-        ping
-        GET
-        "v1/ping/"
-        (params::Ping)
-        (response::Ping)
-    );
+    /// 测试服务器连通性
+    #[api(GET "fapi/v1/ping")]
+    pub async fn ping(&self) -> BianResult<response::Ping> {}
 
-    impl_api!(
-        account_balance_v2
-        SGET
-        "v2/balance/"
-        (params::AccountBalanceV2)
-        (Vec<response::AccountBalance>)
-    );
+    /// 账户余额V2
+    #[api(SGET "fapi/v2/balance")]
+    pub async fn account_balance_v2(
+        &self,
+        param: params::AccountBalanceV2,
+    ) -> BianResult<Vec<response::AccountBalance>> {
+    }
 }
 
 #[cfg(test)]
@@ -54,7 +50,7 @@ mod tests {
     use super::*;
 
     use std::env;
-    const BASE_URL: &str = "https://fapi.binance.com/fapi/";
+    const BASE_URL: &str = "https://fapi.binance.com/";
 
     fn init_test() -> (String, String) {
         dotenv::dotenv().unwrap();
@@ -67,7 +63,7 @@ mod tests {
     async fn test_ping() {
         let (api_key, secret_key) = init_test();
         let client = Client::new(&api_key, &secret_key, BASE_URL);
-        client.ping(params::Ping::default()).await.unwrap();
+        client.ping().await.unwrap();
     }
 
     #[tokio::test]

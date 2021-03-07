@@ -1,17 +1,15 @@
 use proc_macro::TokenStream;
-use proc_macro2::{Ident, TokenTree};
+use proc_macro2::Ident;
+use syn::{parse_macro_input, FnArg, Pat};
 
-/// helper macro to create request
-///
-/// syntax `impl_api!(fn_name: ident method: METHOD, url: str, param_type: T, ok_resp: U)`
-#[proc_macro]
-pub fn impl_api(item: TokenStream) -> TokenStream {
-    let input = proc_macro2::TokenStream::from(item);
-    let mut input_iter = input.into_iter();
-    let fn_name = input_iter.next().expect("expect function name");
-    let verb = input_iter
-        .next()
-        .expect("expect method, GET, PUT, POST etc");
+#[proc_macro_attribute]
+pub fn api(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let attr_str = syn::LitStr::new(
+        &format!(" {}", &attr.to_string()),
+        proc_macro2::Span::call_site(),
+    );
+    let mut attr_iter = proc_macro2::TokenStream::from(attr).into_iter();
+    let verb = attr_iter.next().expect("expect method, GET, PUT, POST etc");
     let verb_str = verb.to_string();
     let should_sign = verb_str.starts_with("S");
     let http_method = if should_sign {
@@ -19,68 +17,74 @@ pub fn impl_api(item: TokenStream) -> TokenStream {
     } else {
         Ident::new(&verb_str.to_lowercase(), verb.span())
     };
-    let url = input_iter.next().expect("expect endpoint url");
-    let param_ty = if let TokenTree::Group(param_group) =
-        input_iter.next().expect("expect api query params")
-    {
-        param_group.stream()
-    } else {
-        panic!("expect param type group")
-    };
+    let url = attr_iter.next().expect("expect endpoint url");
+    let mut api_fn = parse_macro_input!(item as syn::ItemFn);
 
-    let resp_ty =
-        if let TokenTree::Group(resp_group) = input_iter.next().expect("expect api query params") {
-            resp_group.stream()
+    let fn_input = api_fn.sig.inputs.clone();
+    let param_ident = if fn_input.len() == 1 {
+        None
+    } else {
+        let param = fn_input.iter().skip(1).next().unwrap();
+        if let FnArg::Typed(ty) = param {
+            if let Pat::Ident(pat_ident) = *ty.pat.clone() {
+                Some(pat_ident)
+            } else {
+                panic!("unknown token")
+            }
         } else {
-            panic!("expect response type group")
-        };
-
-    let should_be_none = input_iter.next();
-    if should_be_none.is_some() {
-        panic!("input should end here")
-    }
-
-    let expanded = if should_sign {
+            panic!("expected param")
+        }
+    };
+    let prepare_qs_block = if param_ident.is_some() {
         quote::quote! {
-            pub async fn #fn_name(&self, param: #param_ty) -> bian_core::BianResult<#resp_ty> {
-                let url = dbg!(self.base_url.join(#url).unwrap());
-                let qs = format!(
-                    "{}&signature={}",
-                    serde_qs::to_string(&param).unwrap(),
-                    self.sign(&param),
-                );
-                let resp = self
-                .http_client
-                .#http_method(&format!("{}?{}", url, qs))
-                .header("Content-Type", "application/json")
-                .header("X-MBX-APIKEY", &self.api_key)
-                .send()
-                .await?;
-                let resp =APIError::check_resp(resp).await?;
-                let json_resp = resp.json::<#resp_ty>()
-                .await
-                .map_err(|e| bian_core::error::APIError::DecodeError(e.to_string()))?;
-                Ok(json_resp)
-            }
+            let qs = serde_qs::to_string(&param).unwrap();
         }
     } else {
         quote::quote! {
-            pub async fn #fn_name(&self, param: #param_ty) -> bian_core::BianResult<#resp_ty> {
-                let url = dbg!(self.base_url.join(#url).unwrap());
-                let qs = serde_qs::to_string(&param).unwrap();
-                let resp = self
-                .http_client
-                .#http_method(&format!("{}?{}", url, qs))
-                .header("Content-Type", "application/json")
-                .header("X-MBX-APIKEY", &self.api_key)
-                .send()
-                .await?;
-                let json_resp = resp.json::<#resp_ty>()
-                .await
-                .map_err(|e| bian_core::error::APIError::DecodeError(e.to_string()))?;
-                Ok(json_resp)
-            }
+            let qs = "";
         }
     };
-    TokenStream::from(expanded)
+    let sign_block = if should_sign {
+        quote::quote! {
+            let qs  = format!(
+                "{}&signature={}",
+                qs,
+                self.sign(&param),
+            );
+        }
+    } else {
+        quote::quote! {}
+    };
+    let fn_block = syn::parse_quote! {
+
+        let url = self.base_url.join(#url).unwrap();
+
+        #prepare_qs_block
+
+        #sign_block
+
+        let url = if qs.is_empty() { url.to_string() } else { format!("{}?{}", url, qs) };
+
+        let resp = self
+        .http_client
+        .#http_method(&url)
+        .header("Content-Type", "application/json")
+        .header("X-MBX-APIKEY", &self.api_key)
+        .send()
+        .await?;
+        let resp =APIError::check_resp(resp).await?;
+        let json_resp = resp.json()
+        .await
+        .map_err(|e| bian_core::error::APIError::DecodeError(e.to_string()))?;
+        Ok(json_resp)
+    };
+    api_fn.block.stmts = fn_block;
+    api_fn.attrs.push(syn::parse_quote! {
+        #[doc = r""]
+    });
+    let url_doc: syn::Attribute = syn::parse_quote! {
+        #[doc = #attr_str]
+    };
+    api_fn.attrs.push(url_doc);
+    TokenStream::from(quote::quote! { #api_fn })
 }
