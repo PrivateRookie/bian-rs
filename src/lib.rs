@@ -36,6 +36,14 @@ impl Client {
     #[api(GET "fapi/v1/ping")]
     pub async fn ping(&self) -> BianResult<response::Ping> {}
 
+    /// 获取服务器时间
+    #[api(GET "fapi/v1/time")]
+    pub async fn server_time(&self) -> BianResult<response::ServerTime> {}
+
+    /// 获取交易规则和交易对
+    #[api(GET "fapi/v1/exchangeInfo")]
+    pub async fn exchange_info(&self) -> BianResult<response::ExchangeInfo> {}
+
     /// 账户余额V2
     #[api(SGET "fapi/v2/balance")]
     pub async fn account_balance_v2(
@@ -76,5 +84,18 @@ mod tests {
             recv_window: None,
         };
         client.account_balance_v2(params).await.unwrap();
+    }
+
+    #[tokio::test]
+    async fn test_server_time() {
+        let (api_key, secret_key) = init_test();
+        let client = Client::new(&api_key, &secret_key, BASE_URL);
+        client.server_time().await.unwrap();
+    }
+    #[tokio::test]
+    async fn test_exchange_info() {
+        let (api_key, secret_key) = init_test();
+        let client = Client::new(&api_key, &secret_key, BASE_URL);
+        dbg!(client.exchange_info().await).unwrap();
     }
 }
