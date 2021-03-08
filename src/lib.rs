@@ -46,6 +46,14 @@ impl UFuturesHttpClient {
     #[api(GET "fapi/v1/exchangeInfo")]
     pub async fn exchange_info(&self) -> BianResult<response::ExchangeInfo> {}
 
+    /// 深度信息
+    #[api(GET "fapi/v1/depth")]
+    pub async fn depth(&self, param: params::PDepth) -> BianResult<response::Depth> {}
+
+    /// 近期成交
+    #[api(GET "fapi/v1/trades")]
+    pub async fn trades(&self, param: params::PTrade) -> BianResult<Vec<response::Trade>> {}
+
     /// 账户余额V2
     #[api(SGET "fapi/v2/balance")]
     pub async fn account_balance_v2(
@@ -98,6 +106,28 @@ mod tests {
     async fn test_exchange_info() {
         let (api_key, secret_key) = init_test();
         let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
-        dbg!(client.exchange_info().await).unwrap();
+        client.exchange_info().await.unwrap();
+    }
+
+    #[tokio::test]
+    async fn test_depth() {
+        let (api_key, secret_key) = init_test();
+        let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
+        let param = params::PDepth {
+            symbol: "BTCUSDT".to_string(),
+            limit: 500,
+        };
+        dbg!(client.depth(param).await.unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_trades() {
+        let (api_key, secret_key) = init_test();
+        let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
+        let param = params::PTrade {
+            symbol: "BTCUSDT".to_string(),
+            limit: 500,
+        };
+        dbg!(client.trades(param).await.unwrap());
     }
 }

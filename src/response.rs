@@ -198,3 +198,34 @@ pub struct ExchangeInfo {
     pub symbols: Vec<Symbol>,
     pub timezone: String,
 }
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Depth {
+    pub last_update_id: usize,
+    /// 消息时间
+    #[serde(rename = "E")]
+    pub e: usize,
+    /// 撮合引擎时间
+    #[serde(rename = "T")]
+    pub t: usize,
+    // TODO convert string to float
+    /// 买单
+    pub bids: Vec<(String, String)>,
+    /// 卖单
+    pub asks: Vec<(String, String)>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Trade {
+    pub id: usize,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub quote_qty: f64,
+    pub time: i64,
+    pub is_buyer_maker: bool,
+}
