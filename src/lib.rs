@@ -6,14 +6,16 @@ use sha2::Sha256;
 pub mod params;
 pub mod response;
 
-pub struct Client {
+/// U 本位合约 http 客户端
+/// [doc](https://binance-docs.github.io/apidocs/futures/cn/#185368440e)
+pub struct UFuturesHttpClient {
     http_client: reqwest::Client,
     pub api_key: String,
     pub secret_key: String,
     pub base_url: url::Url,
 }
 
-impl Client {
+impl UFuturesHttpClient {
     pub fn new(api_key: &str, secret_key: &str, base_url: &str) -> Self {
         let http_client = reqwest::Client::new();
         Self {
@@ -70,14 +72,14 @@ mod tests {
     #[tokio::test]
     async fn test_ping() {
         let (api_key, secret_key) = init_test();
-        let client = Client::new(&api_key, &secret_key, BASE_URL);
+        let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
         client.ping().await.unwrap();
     }
 
     #[tokio::test]
     async fn test_balance() {
         let (api_key, secret_key) = init_test();
-        let client = Client::new(&api_key, &secret_key, BASE_URL);
+        let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
         let now = chrono::Utc::now();
         let params = params::AccountBalanceV2 {
             timestamp: now.timestamp_millis(),
@@ -89,13 +91,13 @@ mod tests {
     #[tokio::test]
     async fn test_server_time() {
         let (api_key, secret_key) = init_test();
-        let client = Client::new(&api_key, &secret_key, BASE_URL);
+        let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
         client.server_time().await.unwrap();
     }
     #[tokio::test]
     async fn test_exchange_info() {
         let (api_key, secret_key) = init_test();
-        let client = Client::new(&api_key, &secret_key, BASE_URL);
+        let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
         dbg!(client.exchange_info().await).unwrap();
     }
 }
