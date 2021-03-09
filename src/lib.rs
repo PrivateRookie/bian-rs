@@ -54,6 +54,26 @@ impl UFuturesHttpClient {
     #[api(GET "fapi/v1/trades")]
     pub async fn trades(&self, param: params::PTrade) -> BianResult<Vec<response::Trade>> {}
 
+    /// 查询历史成交
+    #[api(GET "fapi/v1/historicalTrades")]
+    pub async fn historical_trades(
+        &self,
+        param: params::PHistoricalTrade,
+    ) -> BianResult<Vec<response::HistoricalTrade>> {
+    }
+
+    /// 近期成交(归集)
+    #[api(GET "fapi/v1/aggTrades")]
+    pub async fn agg_trades(
+        &self,
+        param: params::PAggTrade,
+    ) -> BianResult<Vec<response::AggTrade>> {
+    }
+
+    /// K 线数据
+    #[api(GET "fapi/v1/klines")]
+    pub async fn klines(&self, param: params::PKline) -> BianResult<Vec<response::Kline>> {}
+
     /// 账户余额V2
     #[api(SGET "fapi/v2/balance")]
     pub async fn account_balance_v2(
@@ -129,5 +149,50 @@ mod tests {
             limit: 500,
         };
         dbg!(client.trades(param).await.unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_historical_trades() {
+        let (api_key, secret_key) = init_test();
+        let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
+        let trade_param = params::PTrade {
+            symbol: "BTCUSDT".to_string(),
+            limit: 10,
+        };
+        let trades = client.trades(trade_param).await.unwrap();
+        let htrade_param = params::PHistoricalTrade {
+            symbol: "BTCUSDT".to_string(),
+            from_id: Some(trades.first().unwrap().id),
+            limit: None,
+        };
+        dbg!(client.historical_trades(htrade_param).await.unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_agg_trades() {
+        let (api_key, secret_key) = init_test();
+        let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
+        let param = params::PAggTrade {
+            symbol: "BTCUSDT".to_string(),
+            limit: None,
+            from_id: None,
+            start_time: None,
+            end_time: None,
+        };
+        dbg!(client.agg_trades(param).await.unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_klines() {
+        let (api_key, secret_key) = init_test();
+        let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
+        let param = params::PKline {
+            symbol: "BTCUSDT".to_string(),
+            interval: "1m".to_string(),
+            start_time: None,
+            end_time: None,
+            limit: None,
+        };
+        dbg!(client.klines(param).await.unwrap());
     }
 }

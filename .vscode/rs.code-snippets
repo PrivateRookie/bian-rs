@@ -32,5 +32,14 @@
 	"usize_str": {
 		"prefix": "usize_str",
 		"body": "#[serde(deserialize_with = \"string_as_usize\")]"
+	},
+	"json request struct": {
+		"prefix": "json_req",
+		"body": [
+			"#[derive(Debug, Serialize)]",
+			"pub struct $1 {",
+			"    $2",
+			"}"
+		]
 	}
 }

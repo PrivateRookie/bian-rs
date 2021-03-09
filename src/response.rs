@@ -229,3 +229,50 @@ pub struct Trade {
     pub time: i64,
     pub is_buyer_maker: bool,
 }
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HistoricalTrade {
+    pub id: usize,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub quote_qty: f64,
+    pub time: i64,
+    pub is_buyer_maker: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AggTrade {
+    pub a: i64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub p: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub q: f64,
+    pub f: i64,
+    pub l: i64,
+    #[serde(rename = "T")]
+    pub t: i64,
+    pub m: bool,
+}
+
+// TODO make it to map
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Kline(
+    i64,
+    String,
+    String,
+    String,
+    String,
+    String,
+    i64,
+    String,
+    usize,
+    String,
+    String,
+    String,
+);

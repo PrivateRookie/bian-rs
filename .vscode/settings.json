@@ -8,6 +8,7 @@
         "SPUT",
         "bian",
         "consts",
+        "klines",
         "reqwest"
     ]
 }
