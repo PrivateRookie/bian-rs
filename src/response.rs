@@ -1,9 +1,11 @@
 use std::{collections::HashMap, fmt};
 
+use bian_core::{error::APIError, BianResult};
 use serde::{
     de::{Unexpected, Visitor},
     Deserialize, Deserializer,
 };
+use tungstenite::client::ProxyAutoStream;
 
 struct F64Visitor;
 
@@ -276,3 +278,72 @@ pub struct Kline(
     String,
     String,
 );
+
+pub trait WebsocketResponse<R: serde::de::DeserializeOwned> {
+    fn read_data(&mut self) -> BianResult<R>;
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Ticker {
+    #[serde(rename = "e")]
+    pub event_type: String,
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    #[serde(rename = "s")]
+    pub pair: String,
+    #[serde(rename = "p", deserialize_with = "string_as_f64")]
+    pub price_24h_chg: f64,
+    #[serde(rename = "P", deserialize_with = "string_as_f64")]
+    pub price_24h_chg_pct: f64,
+    #[serde(rename = "w", deserialize_with = "string_as_f64")]
+    pub price_avg: f64,
+    #[serde(rename = "c", deserialize_with = "string_as_f64")]
+    pub price_last_trade: f64,
+    #[serde(rename = "Q", deserialize_with = "string_as_f64")]
+    pub volume_last_trade: f64,
+    #[serde(rename = "o", deserialize_with = "string_as_f64")]
+    pub price_24h_first_trade: f64,
+    #[serde(rename = "h", deserialize_with = "string_as_f64")]
+    pub price_24h_highest: f64,
+    #[serde(rename = "l", deserialize_with = "string_as_f64")]
+    pub price_24h_lowest: f64,
+    #[serde(rename = "v", deserialize_with = "string_as_f64")]
+    pub volume_24h: f64,
+    #[serde(rename = "q", deserialize_with = "string_as_f64")]
+    pub amount_24h: f64,
+    #[serde(rename = "O")]
+    pub open_time: i64,
+    #[serde(rename = "C")]
+    pub close_time: i64,
+    #[serde(rename = "F")]
+    pub first_trade_id: u64,
+    #[serde(rename = "L")]
+    pub last_trade_id: f64,
+    #[serde(rename = "n")]
+    pub trade_count: usize,
+}
+
+impl<R: serde::de::DeserializeOwned> WebsocketResponse<R>
+    for tungstenite::WebSocket<ProxyAutoStream>
+{
+    fn read_data(&mut self) -> BianResult<R> {
+        let msg = self
+            .read_message()
+            .map_err(|e| APIError::WSClientError(e.to_string()))?;
+        match msg {
+            tungstenite::Message::Text(text) => {
+                let resp = serde_json::from_str(&text)
+                    .map_err(|e| APIError::DecodeError(e.to_string()))?;
+                Ok(resp)
+            }
+            tungstenite::Message::Ping(_) => {
+                let pong = tungstenite::Message::Pong(vec![]);
+                self.write_message(pong)
+                    .map_err(|e| APIError::WSClientError(e.to_string()))?;
+                self.read_data()
+            }
+            _ => unreachable!(),
+        }
+    }
+}

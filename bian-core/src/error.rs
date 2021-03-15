@@ -16,6 +16,10 @@ pub enum APIError {
     RequestError(reqwest::Error),
     #[error("decode response body error {0}")]
     DecodeError(String),
+    #[error("ws client read data failed {0}")]
+    WSClientError(String),
+    #[error("ws connect error {0}")]
+    WSConnectError(String),
     #[error("unknown {0}")]
     Unknown(String),
 }
