@@ -108,7 +108,7 @@ async fn test_balance() {
 
 ## TO DO
 
-- [ ] websocket 客户端
+- [x] websocket 客户端
 - [ ] API 限速处理
 - [ ] 更多API...
 
