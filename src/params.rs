@@ -72,6 +72,21 @@ pub struct PIndexPriceKline {
 }
 
 #[derive(Debug, Serialize)]
+pub struct PPremiumIndex {
+    pub symbol: String,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PFundingRate {
+    pub symbol: Option<String>,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+    /// 默认值:100 最大值:1000
+    pub limit: Option<usize>,
+}
+
+#[derive(Debug, Serialize)]
 pub struct AccountBalanceV2 {
     pub recv_window: Option<i64>,
     pub timestamp: i64,

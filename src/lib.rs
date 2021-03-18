@@ -98,9 +98,24 @@ impl UFuturesHttpClient {
     ) -> BianResult<Vec<response::Kline>> {
     }
 
-    // /// 最新标记价格和资金费率(单symbol)
-    // #[api(GET "fapi/v1/premiumIndex")]
-    // pub async fn premium_index(&self, param: pram)
+    /// 最新标记价格和资金费率(单symbol)
+    #[api(GET "fapi/v1/premiumIndex")]
+    pub async fn premium_index(
+        &self,
+        param: params::PPremiumIndex,
+    ) -> BianResult<response::PremiumIndex> {
+    }
+
+    /// 最新标记价格和资金费率(所有symbol)
+    #[api(GET "fapi/v1/premiumIndex")]
+    pub async fn premium_indexes(&self) -> BianResult<Vec<response::PremiumIndex>> {}
+
+
+    /// 查询资金费率历史
+    #[api(GET "fapi/v1/fundingRate")]
+    pub async fn funding_rate(&self, param: params::PFundingRate) -> BianResult<Vec<response::FundingRate>> {}
+
+    
 
     /// 账户余额V2
     #[api(SGET "fapi/v2/balance")]
@@ -109,7 +124,6 @@ impl UFuturesHttpClient {
         param: params::AccountBalanceV2,
     ) -> BianResult<Vec<response::AccountBalance>> {
     }
-
 }
 
 /// U 本位合约 websocket 客户端

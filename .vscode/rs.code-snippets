@@ -27,11 +27,19 @@
 	},
 	"f64_str": {
 		"prefix": "f64_str",
-		"body": "#[serde(deserialize_with = \"string_as_f64\")]"
+		"body": [
+			"#[serde(deserialize_with = \"string_as_f64\")]",
+			"pub $1: f64,",
+			"$2"
+		]
 	},
 	"usize_str": {
 		"prefix": "usize_str",
-		"body": "#[serde(deserialize_with = \"string_as_usize\")]"
+		"body": [
+			"#[serde(deserialize_with = \"string_as_usize\")]",
+			"pub $1: usize,",
+			"$2"
+		]
 	},
 	"json request struct": {
 		"prefix": "json_req",

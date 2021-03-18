@@ -279,6 +279,31 @@ pub struct Kline(
     String,
 );
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PremiumIndex {
+    symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    mark_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub index_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub last_funding_rate: f64,
+    pub next_funding_time: i64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub interest_rate: f64,
+    pub time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FundingRate {
+    pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub funding_rate: f64,
+    pub funding_time: i64,
+}
+
 pub trait WebsocketResponse<R: serde::de::DeserializeOwned> {
     fn read_data(&mut self) -> BianResult<R>;
 }
