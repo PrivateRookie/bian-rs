@@ -101,7 +101,7 @@ async fn test_klines() {
     let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
     let param = params::PKline {
         symbol: "BTCUSDT".to_string(),
-        interval: "1m".to_string(),
+        interval: enums::Interval::Min1,
         start_time: None,
         end_time: None,
         limit: None,

@@ -1,5 +1,6 @@
 use std::{collections::HashMap, fmt};
 
+use crate::enums::OrderType;
 use crate::error::{APIError, BianResult};
 use serde::{
     de::{Unexpected, Visitor},
@@ -185,8 +186,7 @@ pub struct Symbol {
     /// 开启"priceProtect"的条件订单的触发阈值
     pub trigger_protect: f64,
     pub filters: Vec<SymbolFilter>,
-    // TODO to enum
-    pub order_types: Vec<String>,
+    pub order_types: Vec<OrderType>,
     pub time_in_force: Vec<String>,
 }
 

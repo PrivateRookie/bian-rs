@@ -1,6 +1,7 @@
 use std::usize;
 
 use serde::Serialize;
+use crate::enums::Interval;
 
 #[derive(Debug, Serialize)]
 pub struct PDepth {
@@ -42,8 +43,7 @@ pub struct PAggTrade {
 #[serde(rename_all = "camelCase")]
 pub struct PKline {
     pub symbol: String,
-    // TODO make enum
-    pub interval: String,
+    pub interval: Interval,
     pub start_time: Option<i64>,
     pub end_time: Option<i64>,
     pub limit: Option<usize>,
