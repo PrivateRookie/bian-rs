@@ -1,7 +1,7 @@
 use std::net::SocketAddr;
 
-use bian_core::{error::APIError, BianResult};
 use bian_proc::api;
+use error::{APIError, BianResult};
 use hmac::{Hmac, Mac, NewMac};
 use sha2::Sha256;
 use tungstenite::{
@@ -9,6 +9,8 @@ use tungstenite::{
     WebSocket,
 };
 
+pub mod enums;
+pub mod error;
 pub mod params;
 pub mod response;
 

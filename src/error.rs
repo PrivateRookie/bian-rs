@@ -53,3 +53,5 @@ impl APIError {
         }
     }
 }
+
+pub type BianResult<T> = Result<T, APIError>;

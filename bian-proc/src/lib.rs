@@ -75,7 +75,7 @@ pub fn api(attr: TokenStream, item: TokenStream) -> TokenStream {
         let resp =APIError::check_resp(resp).await?;
         let json_resp = resp.json()
         .await
-        .map_err(|e| bian_core::error::APIError::DecodeError(e.to_string()))?;
+        .map_err(|e| crate::error::APIError::DecodeError(e.to_string()))?;
         Ok(json_resp)
     };
     api_fn.block.stmts = fn_block;
