@@ -82,6 +82,26 @@ impl UFuturesHttpClient {
     #[api(GET "fapi/v1/klines")]
     pub async fn klines(&self, param: params::PKline) -> BianResult<Vec<response::Kline>> {}
 
+    /// 连续合约K线数据
+    #[api(GET "fapi/v1/continuousKlines")]
+    pub async fn continuous_klines(
+        &self,
+        param: params::PContinuousKline,
+    ) -> BianResult<Vec<response::Kline>> {
+    }
+
+    /// 价格指数K线数据
+    #[api(GET "fapi/v1/indexPriceKlines")]
+    pub async fn index_price_klines(
+        &self,
+        param: params::PIndexPriceKline,
+    ) -> BianResult<Vec<response::Kline>> {
+    }
+
+    // /// 最新标记价格和资金费率(单symbol)
+    // #[api(GET "fapi/v1/premiumIndex")]
+    // pub async fn premium_index(&self, param: pram)
+
     /// 账户余额V2
     #[api(SGET "fapi/v2/balance")]
     pub async fn account_balance_v2(
@@ -89,6 +109,7 @@ impl UFuturesHttpClient {
         param: params::AccountBalanceV2,
     ) -> BianResult<Vec<response::AccountBalance>> {
     }
+
 }
 
 /// U 本位合约 websocket 客户端

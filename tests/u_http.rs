@@ -108,3 +108,33 @@ async fn test_klines() {
     };
     dbg!(client.klines(param).await.unwrap());
 }
+
+#[tokio::test]
+async fn test_continuous_klines() {
+    let (api_key, secret_key) = init_test();
+    let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
+    let param = params::PContinuousKline {
+        pair: "BTCUSDT".to_string(),
+        interval: enums::Interval::Min1,
+        start_time: None,
+        end_time: None,
+        limit: None,
+        contract_type: "PERPETUAL".to_string(),
+    };
+    dbg!(client.continuous_klines(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_index_price_klines() {
+    let (api_key, secret_key) = init_test();
+    let client = UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL);
+    let param = params::PContinuousKline {
+        pair: "BTCUSDT".to_string(),
+        interval: enums::Interval::Min1,
+        start_time: None,
+        end_time: None,
+        limit: None,
+        contract_type: "PERPETUAL".to_string(),
+    };
+    dbg!(client.continuous_klines(param).await.unwrap());
+}

@@ -1,7 +1,7 @@
 use std::usize;
 
-use serde::Serialize;
 use crate::enums::Interval;
+use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 pub struct PDepth {
@@ -43,6 +43,28 @@ pub struct PAggTrade {
 #[serde(rename_all = "camelCase")]
 pub struct PKline {
     pub symbol: String,
+    pub interval: Interval,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+    pub limit: Option<usize>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PContinuousKline {
+    pub pair: String,
+    pub contract_type: String,
+    pub interval: Interval,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+    /// 默认值:500 最大值:1500
+    pub limit: Option<usize>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PIndexPriceKline {
+    pub pair: String,
     pub interval: Interval,
     pub start_time: Option<i64>,
     pub end_time: Option<i64>,
