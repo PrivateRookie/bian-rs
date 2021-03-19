@@ -3,6 +3,12 @@ name = "bian-rs"
 version = "0.1.0"
 authors = ["PrivateRookie <996514515@qq.com>"]
 edition = "2018"
+description = "币安 Rust async SDK | binance Rust async SDK"
+license-file = "LICENSE"
+readme = "README.md"
+homepage = 'https://github.com/PrivateRookie/bian-rs'
+repository = 'https://github.com/PrivateRookie/bian-rs'
+keywords = ["Binance", "数字货币", "币安"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
