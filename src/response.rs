@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt};
+use std::{collections::HashMap, fmt, usize};
 
 use crate::enums::OrderType;
 use crate::error::{APIError, BianResult};
@@ -302,6 +302,46 @@ pub struct FundingRate {
     #[serde(deserialize_with = "string_as_f64")]
     pub funding_rate: f64,
     pub funding_time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct H24ticker {
+    pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price_change: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price_change_percent: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub weighted_avg_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub last_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub last_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub open_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub high_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub low_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub volume: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub quote_volume: f64,
+    pub open_time: i64,
+    pub close_time: i64,
+    pub first_id: usize,
+    pub last_id: usize,
+    pub count: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Price {
+    pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    pub time: i64,
 }
 
 pub trait WebsocketResponse<R: serde::de::DeserializeOwned> {

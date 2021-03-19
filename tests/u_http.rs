@@ -131,7 +131,7 @@ async fn test_index_price_klines() {
 #[tokio::test]
 async fn test_premium_index() {
     let client = init_client();
-    let param = params::PPremiumIndex {
+    let param = params::PSymbol {
         symbol: "BTCUSDT".to_string(),
     };
     dbg!(client.premium_index(param).await.unwrap());
@@ -153,4 +153,34 @@ async fn test_funding_rate() {
         limit: Some(3),
     };
     dbg!(client.funding_rate(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_h24_ticker() {
+    let client = init_client();
+    let param = params::PSymbol {
+        symbol: "BTCUSDT".to_string(),
+    };
+    dbg!(client.h24_ticker(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_h24_tickers() {
+    let client = init_client();
+    dbg!(client.h24_tickers().await.unwrap());
+}
+
+#[tokio::test]
+async fn test_price() {
+    let client = init_client();
+    let param = params::PSymbol {
+        symbol: "BTCUSDT".to_string(),
+    };
+    dbg!(client.price(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_prices() {
+    let client = init_client();
+    dbg!(client.prices().await.unwrap());
 }

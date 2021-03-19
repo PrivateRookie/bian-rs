@@ -72,7 +72,7 @@ pub struct PIndexPriceKline {
 }
 
 #[derive(Debug, Serialize)]
-pub struct PPremiumIndex {
+pub struct PSymbol {
     pub symbol: String,
 }
 

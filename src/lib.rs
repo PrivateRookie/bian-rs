@@ -102,7 +102,7 @@ impl UFuturesHttpClient {
     #[api(GET "fapi/v1/premiumIndex")]
     pub async fn premium_index(
         &self,
-        param: params::PPremiumIndex,
+        param: params::PSymbol,
     ) -> BianResult<response::PremiumIndex> {
     }
 
@@ -110,12 +110,29 @@ impl UFuturesHttpClient {
     #[api(GET "fapi/v1/premiumIndex")]
     pub async fn premium_indexes(&self) -> BianResult<Vec<response::PremiumIndex>> {}
 
-
     /// 查询资金费率历史
     #[api(GET "fapi/v1/fundingRate")]
-    pub async fn funding_rate(&self, param: params::PFundingRate) -> BianResult<Vec<response::FundingRate>> {}
+    pub async fn funding_rate(
+        &self,
+        param: params::PFundingRate,
+    ) -> BianResult<Vec<response::FundingRate>> {
+    }
 
-    
+    /// 24小时价格变动情况(单个symbol)
+    #[api(GET "fapi/v1/ticker/24hr")]
+    pub async fn h24_ticker(&self, param: params::PSymbol) -> BianResult<response::H24ticker> {}
+
+    /// 24小时价格变动情况(所有symbol)
+    #[api(GET "fapi/v1/ticker/24hr")]
+    pub async fn h24_tickers(&self) -> BianResult<Vec<response::H24ticker>> {}
+
+    /// 最新价格(单个symbol)
+    #[api(GET "fapi/v1/ticker/price")]
+    pub async fn price(&self, param: params::PSymbol) -> BianResult<response::Price> {}
+
+    /// 最新价格
+    #[api(GET "fapi/v1/ticker/price")]
+    pub async fn prices(&self) -> BianResult<Vec<response::Price>> {}
 
     /// 账户余额V2
     #[api(SGET "fapi/v2/balance")]
