@@ -1,11 +1,13 @@
 {
     "cSpell.words": [
         "APIKEY",
+        "BTCUP",
         "Hmac",
         "SDELETE",
         "SGET",
         "SPOST",
         "SPUT",
+        "avrage",
         "bian",
         "consts",
         "klines",

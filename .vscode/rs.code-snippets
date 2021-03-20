@@ -49,5 +49,13 @@
 			"    $2",
 			"}"
 		]
+	},
+	"http request fn": {
+		"prefix": "req_fn",
+		"body": [
+			"/// $1",
+			"#[api(${2:GET} \"$3\")]",
+			"pub async fn $4(&self, $5) -> $6 {}"
+		]
 	}
 }

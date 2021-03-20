@@ -134,6 +134,88 @@ impl UFuturesHttpClient {
     #[api(GET "fapi/v1/ticker/price")]
     pub async fn prices(&self) -> BianResult<Vec<response::Price>> {}
 
+    /// 当前最优挂单(单symbol)
+    #[api(GET "fapi/v1/ticker/bookTicker")]
+    pub async fn book_ticker(&self, param: params::PSymbol) -> BianResult<response::BookTicker> {}
+
+    /// 当前最优挂单
+    #[api(GET "fapi/v1/ticker/bookTicker")]
+    pub async fn book_tickers(&self) -> BianResult<Vec<response::BookTicker>> {}
+
+    /// 获取市场强平订单
+    ///
+    /// - 如果不提供symbol,返回全市场强平订单。
+    /// - 仅可查询最近7天数据
+    #[api(GET "fapi/v1/allForceOrders")]
+    pub async fn all_force_orders(
+        &self,
+        param: params::PForceOrder,
+    ) -> BianResult<Vec<response::ForceOrder>> {
+    }
+
+    /// 获取未平仓合约数
+    #[api(GET "fapi/v1/openInterest")]
+    pub async fn open_interest(
+        &self,
+        param: params::PSymbol,
+    ) -> BianResult<response::OpenInterest> {
+    }
+
+    /// 合约持仓量
+    ///
+    /// - 若无 startime 和 endtime 限制， 则默认返回当前时间往前的limit值
+    /// - 仅支持最近30天的数据
+    #[api(GET "futures/data/openInterestHist")]
+    pub async fn open_interest_hist(
+        &self,
+        param: params::PFutures,
+    ) -> BianResult<Vec<response::OpenInterestHist>> {
+    }
+
+    /// 大户账户数多空比
+    #[api(GET "futures/data/topLongShortAccountRatio")]
+    pub async fn top_long_short_account_ratio(
+        &self,
+        param: params::PFutures,
+    ) -> BianResult<Vec<response::LongShortRatio>> {
+    }
+
+    /// 大户持仓量多空比
+    #[api(GET "futures/data/topLongShortPositionRatio")]
+    pub async fn top_long_short_position_ratio(
+        &self,
+        param: params::PFutures,
+    ) -> BianResult<Vec<response::LongShortRatio>> {
+    }
+
+    /// 多空持仓人数比
+    #[api(GET "futures/data/globalLongShortAccountRatio")]
+    pub async fn global_long_short_position_ratio(
+        &self,
+        param: params::PFutures,
+    ) -> BianResult<Vec<response::LongShortRatio>> {
+    }
+
+    /// 合约主动买卖量
+    #[api(GET "futures/data/takerlongshortRatio")]
+    pub async fn taker_long_short_ratio(
+        &self,
+        param: params::PFutures,
+    ) -> BianResult<Vec<response::TakerLongShortRatio>> {
+    }
+
+    /// 杠杆代币历史净值K线
+    #[api(GET "fapi/v1/lvtKlines")]
+    pub async fn lvt_klines(&self, param: params::PLvtKlines) -> BianResult<Vec<response::Kline>> {}
+
+    /// 综合指数交易对信息(单个)
+    #[api(GET "fapi/v1/indexInfo")]
+    pub async fn index_info(&self, param: params::PSymbol) -> BianResult<response::IndexInfo> {}
+
+    /// 综合指数交易对信息
+    #[api(GET "fapi/v1/indexInfo")]
+    pub async fn index_infos(&self) -> BianResult<Vec<response::IndexInfo>> {}
+
     /// 账户余额V2
     #[api(SGET "fapi/v2/balance")]
     pub async fn account_balance_v2(

@@ -85,7 +85,6 @@ pub enum PositionDirect {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum TimeInForce {
     GTC,
     IOC,

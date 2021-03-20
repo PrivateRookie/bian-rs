@@ -87,6 +87,36 @@ pub struct PFundingRate {
 }
 
 #[derive(Debug, Serialize)]
+pub struct PForceOrder {
+    pub symbol: Option<String>,
+    pub start_time: Option<i64>,
+    /// 结束时间,默认当前时间
+    pub end_time: Option<i64>,
+    /// 从endTime倒推算起的数据条数，默认值:100 最大值:1000
+    pub limit: Option<usize>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PFutures {
+    pub symbol: String,
+    pub period: Interval,
+    /// 默认30，最大500
+    pub limit: Option<usize>,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PLvtKlines {
+    pub symbol: String,
+    pub interval: Interval,
+    /// 默认30，最大500
+    pub limit: Option<usize>,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+}
+
+#[derive(Debug, Serialize)]
 pub struct AccountBalanceV2 {
     pub recv_window: Option<i64>,
     pub timestamp: i64,

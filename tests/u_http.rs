@@ -1,3 +1,4 @@
+use bian_rs::enums::*;
 use bian_rs::*;
 
 use std::env;
@@ -183,4 +184,134 @@ async fn test_price() {
 async fn test_prices() {
     let client = init_client();
     dbg!(client.prices().await.unwrap());
+}
+
+#[tokio::test]
+async fn test_book_ticker() {
+    let client = init_client();
+    let param = params::PSymbol {
+        symbol: "BTCUSDT".to_string(),
+    };
+    dbg!(client.book_ticker(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_book_tickers() {
+    let client = init_client();
+    dbg!(client.book_tickers().await.unwrap());
+}
+
+#[tokio::test]
+async fn test_all_force_order() {
+    let client = init_client();
+    let param = params::PForceOrder {
+        symbol: Some("BTCUSDT".to_string()),
+        start_time: None,
+        end_time: None,
+        limit: Some(10),
+    };
+    dbg!(client.all_force_orders(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_open_interest() {
+    let client = init_client();
+    let param = params::PSymbol {
+        symbol: "BTCUSDT".to_string(),
+    };
+    dbg!(client.open_interest(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_open_interest_hist() {
+    let client = init_client();
+    let param = params::PFutures {
+        symbol: "BTCUSDT".to_string(),
+        period: Interval::Min1,
+        limit: None,
+        start_time: None,
+        end_time: None,
+    };
+    dbg!(client.open_interest_hist(param).await.unwrap());
+}
+#[tokio::test]
+async fn test_top_long_short_account_ratio() {
+    let client = init_client();
+    let param = params::PFutures {
+        symbol: "BTCUSDT".to_string(),
+        period: Interval::Min1,
+        limit: None,
+        start_time: None,
+        end_time: None,
+    };
+    dbg!(client.top_long_short_account_ratio(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_top_long_short_position_ratio() {
+    let client = init_client();
+    let param = params::PFutures {
+        symbol: "BTCUSDT".to_string(),
+        period: Interval::Min1,
+        limit: None,
+        start_time: None,
+        end_time: None,
+    };
+    dbg!(client.top_long_short_position_ratio(param).await.unwrap());
+}
+#[tokio::test]
+async fn test_global_long_short_position_ratio() {
+    let client = init_client();
+    let param = params::PFutures {
+        symbol: "BTCUSDT".to_string(),
+        period: Interval::Min1,
+        limit: None,
+        start_time: None,
+        end_time: None,
+    };
+    dbg!(client
+        .global_long_short_position_ratio(param)
+        .await
+        .unwrap());
+}
+
+#[tokio::test]
+async fn test_taker_long_short_ratio() {
+    let client = init_client();
+    let param = params::PFutures {
+        symbol: "BTCUSDT".to_string(),
+        period: Interval::Min1,
+        limit: None,
+        start_time: None,
+        end_time: None,
+    };
+    dbg!(client.taker_long_short_ratio(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_lvt_klines() {
+    let client = init_client();
+    let param = params::PLvtKlines {
+        symbol: "BTCUP".to_string(),
+        interval: Interval::Min1,
+        limit: None,
+        start_time: None,
+        end_time: None,
+    };
+    dbg!(client.lvt_klines(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_index_info() {
+    let client = init_client();
+    let param = params::PSymbol {
+        symbol: "DEFIUSDT".to_string(),
+    };
+    dbg!(client.index_info(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_index_infos() {
+    let client = init_client();
+    dbg!(client.index_infos().await.unwrap());
 }

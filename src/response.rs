@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fmt, usize};
 
-use crate::enums::OrderType;
+use crate::enums::{OrderSide, OrderStatus, OrderType, TimeInForce};
 use crate::error::{APIError, BianResult};
 use serde::{
     de::{Unexpected, Visitor},
@@ -342,6 +342,108 @@ pub struct Price {
     #[serde(deserialize_with = "string_as_f64")]
     pub price: f64,
     pub time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BookTicker {
+    pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub bid_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub bid_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub ask_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub ask_qty: f64,
+    pub time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ForceOrder {
+    pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub orig_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub executed_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub average_price: f64,
+    pub status: OrderStatus,
+    pub time_in_force: TimeInForce,
+    pub r#type: OrderType,
+    pub side: OrderSide,
+    pub time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OpenInterest {
+    /// 未平仓合约数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub open_interest: f64,
+    pub symbol: String,
+    /// 撮合引擎时间
+    pub time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OpenInterestHist {
+    pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub sum_open_interest: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub sum_open_interest_value: f64,
+    #[serde(deserialize_with = "string_as_usize")]
+    pub timestamp: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LongShortRatio {
+    pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub long_short_ratio: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub long_account: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub short_account: f64,
+    #[serde(deserialize_with = "string_as_usize")]
+    pub timestamp: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TakerLongShortRatio {
+    #[serde(deserialize_with = "string_as_f64")]
+    pub buy_sell_ratio: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub buy_vol: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub sell_vol: f64,
+    #[serde(deserialize_with = "string_as_usize")]
+    pub timestamp: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct IndexInfo {
+    pub symbol: String,
+    pub time: i64,
+    pub base_asset_list: Vec<BaseAsset>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BaseAsset {
+    pub base_asset: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub weight_in_quantity: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub weight_in_percentage: f64,
 }
 
 pub trait WebsocketResponse<R: serde::de::DeserializeOwned> {
