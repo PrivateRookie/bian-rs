@@ -163,7 +163,7 @@ impl UFuturesHttpClient {
 
     /// 合约持仓量
     ///
-    /// - 若无 startime 和 endtime 限制， 则默认返回当前时间往前的limit值
+    /// - 若无 star_time 和 end_time 限制， 则默认返回当前时间往前的limit值
     /// - 仅支持最近30天的数据
     #[api(GET "futures/data/openInterestHist")]
     pub async fn open_interest_hist(
@@ -233,14 +233,60 @@ pub struct UFuturesProxyWSClient {
 }
 
 impl UFuturesProxyWSClient {
-    pub fn symbol_ticker(&self, symbol: &str) -> BianResult<WebSocket<ProxyAutoStream>> {
+    fn build_single(
+        &self,
+        symbol: String,
+        channel: &str,
+    ) -> BianResult<WebSocket<ProxyAutoStream>> {
         let url = self
             .base_url
-            .join(&format!("ws/{}@ticker", symbol))
+            .join(&format!("ws/{}@{}", symbol, channel))
             .unwrap();
         let (socket, _) = connect_with_proxy(url, self.proxy, None, 3)
             .map_err(|e| APIError::WSConnectError(e.to_string()))?;
         Ok(socket)
+    }
+
+    fn build_multi(
+        &self,
+        symbols: Vec<String>,
+        channel: &str,
+    ) -> BianResult<WebSocket<ProxyAutoStream>> {
+        let streams = symbols
+            .iter()
+            .map(|sym| format!("{}@{}", sym, channel))
+            .collect::<Vec<String>>()
+            .join("/");
+        let url = self
+            .base_url
+            .join(&format!("stream/?streams={}", streams))
+            .unwrap();
+        let (socket, _) = connect_with_proxy(url, self.proxy, None, 3)
+            .map_err(|e| APIError::WSConnectError(e.to_string()))?;
+        Ok(socket)
+    }
+
+    /// 同一价格、同一方向、同一时间(100ms计算)的trade会被聚合为一条
+    pub fn agg_trade(&self, symbol: String) -> BianResult<WebSocket<ProxyAutoStream>> {
+        self.build_single(symbol, "aggTrade")
+    }
+
+    /// 同一价格、同一方向、同一时间(100ms计算)的trade会被聚合为一条
+    pub fn agg_trade_multi(&self, symbols: Vec<String>) -> BianResult<WebSocket<ProxyAutoStream>> {
+        self.build_multi(symbols, "aggTrade")
+    }
+
+    /// 按Symbol刷新的24小时完整ticker信息
+    pub fn symbol_ticker(&self, symbol: String) -> BianResult<WebSocket<ProxyAutoStream>> {
+        self.build_single(symbol, "ticker")
+    }
+
+    /// 按Symbol刷新的24小时完整ticker信息
+    pub fn symbol_ticker_multi(
+        &self,
+        symbols: Vec<String>,
+    ) -> BianResult<WebSocket<ProxyAutoStream>> {
+        self.build_multi(symbols, "ticker")
     }
 }
 
@@ -248,19 +294,4 @@ impl UFuturesProxyWSClient {
 /// [doc](https://binance-docs.github.io/apidocs/futures/cn/#websocket)
 pub struct UFuturesWSClient {
     pub base_url: url::Url,
-}
-
-#[test]
-fn test_ws() {
-    use crate::response::WebsocketResponse;
-    use std::net::ToSocketAddrs;
-
-    let base_url = url::Url::parse("wss://fstream.binance.com/").unwrap();
-    let proxy = "win:1087".to_socket_addrs().unwrap().next().unwrap();
-    let client = UFuturesProxyWSClient { proxy, base_url };
-    let mut stream = client.symbol_ticker("ethusdt").unwrap();
-    loop {
-        let msg: response::Ticker = stream.read_data().unwrap();
-        dbg!(msg);
-    }
 }

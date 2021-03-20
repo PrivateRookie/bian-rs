@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "APIKEY",
+        "Addrs",
         "BTCUP",
         "Hmac",
         "SDELETE",
@@ -10,7 +11,14 @@
         "avrage",
         "bian",
         "consts",
+        "dotenv",
+        "ethusdt",
+        "fapi",
+        "fstream",
         "klines",
-        "reqwest"
+        "reqwest",
+        "takerlongshort",
+        "tungstenite",
+        "varkey"
     ]
 }

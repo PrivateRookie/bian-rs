@@ -447,7 +447,50 @@ pub struct BaseAsset {
 }
 
 pub trait WebsocketResponse<R: serde::de::DeserializeOwned> {
-    fn read_data(&mut self) -> BianResult<R>;
+    fn read_stream_single(&mut self) -> BianResult<R>;
+    fn read_stream_multi(&mut self) -> BianResult<R>;
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MultiResponse<R> {
+    pub stream: String,
+    pub data: R,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSAggTrade {
+    /// 事件类型 aggTrade
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 交易对
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// 归集成交 ID
+    #[serde(rename = "a")]
+    pub agg_id: usize,
+    /// 成交价格
+    #[serde(rename = "p", deserialize_with = "string_as_f64")]
+    pub price: f64,
+    /// 成交量
+    #[serde(rename = "q", deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    /// 被归集的首个交易ID
+    #[serde(rename = "f")]
+    pub first_trade_id: usize,
+    /// 被归集的末次交易ID
+    #[serde(rename = "l")]
+    pub last: usize,
+    /// 成交时间
+    #[serde(rename = "T")]
+    pub trade_time: i64,
+    /// 买方是否是做市方。如true，则此次成交是一个主动卖出单，否则是一个主动买入单。
+    #[serde(rename = "m")]
+    pub is_market: bool,
 }
 
 #[derive(Debug, Deserialize)]
@@ -494,7 +537,7 @@ pub struct Ticker {
 impl<R: serde::de::DeserializeOwned> WebsocketResponse<R>
     for tungstenite::WebSocket<ProxyAutoStream>
 {
-    fn read_data(&mut self) -> BianResult<R> {
+    fn read_stream_single(&mut self) -> BianResult<R> {
         let msg = self
             .read_message()
             .map_err(|e| APIError::WSClientError(e.to_string()))?;
@@ -508,7 +551,27 @@ impl<R: serde::de::DeserializeOwned> WebsocketResponse<R>
                 let pong = tungstenite::Message::Pong(vec![]);
                 self.write_message(pong)
                     .map_err(|e| APIError::WSClientError(e.to_string()))?;
-                self.read_data()
+                self.read_stream_single()
+            }
+            _ => unreachable!(),
+        }
+    }
+
+    fn read_stream_multi(&mut self) -> BianResult<R> {
+        let msg = self
+            .read_message()
+            .map_err(|e| APIError::WSClientError(e.to_string()))?;
+        match msg {
+            tungstenite::Message::Text(text) => {
+                let wrapped_resp: MultiResponse<R> = serde_json::from_str(&text)
+                    .map_err(|e| APIError::DecodeError(e.to_string()))?;
+                Ok(wrapped_resp.data)
+            }
+            tungstenite::Message::Ping(_) => {
+                let pong = tungstenite::Message::Pong(vec![]);
+                self.write_message(pong)
+                    .map_err(|e| APIError::WSClientError(e.to_string()))?;
+                self.read_stream_multi()
             }
             _ => unreachable!(),
         }
