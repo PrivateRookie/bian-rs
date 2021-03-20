@@ -225,7 +225,7 @@ impl UFuturesHttpClient {
     }
 }
 
-/// U 本位合约 websocket 客户端
+/// U 本位合约 websocket 客户端(使用代理)
 /// [doc](https://binance-docs.github.io/apidocs/futures/cn/#websocket)
 pub struct UFuturesProxyWSClient {
     pub proxy: SocketAddr,
@@ -242,6 +242,12 @@ impl UFuturesProxyWSClient {
             .map_err(|e| APIError::WSConnectError(e.to_string()))?;
         Ok(socket)
     }
+}
+
+/// U 本位合约 websocket 客户端
+/// [doc](https://binance-docs.github.io/apidocs/futures/cn/#websocket)
+pub struct UFuturesWSClient {
+    pub base_url: url::Url,
 }
 
 #[test]
