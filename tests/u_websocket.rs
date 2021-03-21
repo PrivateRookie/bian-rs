@@ -20,7 +20,7 @@ fn test_ws_agg_trade() {
         let msg: response::WSAggTrade = stream.read_stream_single().unwrap();
         dbg!(msg);
     }
-    stream.close(None).unwrap();
+    stream.close_stream();
 
     let mut stream = client
         .agg_trade_multi(vec!["btcusdt".to_string(), "ethusdt".to_string()])
@@ -29,7 +29,26 @@ fn test_ws_agg_trade() {
         let msg: response::WSAggTrade = stream.read_stream_multi().unwrap();
         dbg!(msg);
     }
-    stream.close(None).unwrap();
+    stream.close_stream();
+}
+
+#[test]
+fn test_ws_mark_price() {
+    let client = init_client();
+    let mut stream = client.mark_price("btcusdt".to_string(), 1).unwrap();
+    for _ in 0..5 {
+        let msg: response::WSPrice = stream.read_stream_single().unwrap();
+        dbg!(msg);
+    }
+    stream.close_stream();
+    let mut stream = client
+        .mark_price_multi(vec!["btcusdt".to_string(), "ethusdt".to_string()], 1)
+        .unwrap();
+    for _ in 0..10 {
+        let msg: response::WSPrice = stream.read_stream_multi().unwrap();
+        dbg!(msg);
+    }
+    stream.close_stream();
 }
 
 #[test]
@@ -40,7 +59,7 @@ fn test_ws_ticker() {
         let msg: response::Ticker = stream.read_stream_single().unwrap();
         dbg!(msg);
     }
-    stream.close(None).unwrap();
+    stream.close_stream();
 
     let mut stream = client
         .symbol_ticker_multi(vec!["btcusdt".to_string(), "ethusdt".to_string()])
@@ -49,5 +68,5 @@ fn test_ws_ticker() {
         let msg: response::Ticker = stream.read_stream_multi().unwrap();
         dbg!(msg);
     }
-    stream.close(None).unwrap();
+    stream.close_stream();
 }

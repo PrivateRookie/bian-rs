@@ -449,6 +449,7 @@ pub struct BaseAsset {
 pub trait WebsocketResponse<R: serde::de::DeserializeOwned> {
     fn read_stream_single(&mut self) -> BianResult<R>;
     fn read_stream_multi(&mut self) -> BianResult<R>;
+    fn close_stream(&mut self);
 }
 
 #[derive(Debug, Deserialize)]
@@ -491,6 +492,35 @@ pub struct WSAggTrade {
     /// 买方是否是做市方。如true，则此次成交是一个主动卖出单，否则是一个主动买入单。
     #[serde(rename = "m")]
     pub is_market: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSPrice {
+    /// 事件类型 aggTrade
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 交易对
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// 标记价格
+    #[serde(rename = "p", deserialize_with = "string_as_f64")]
+    pub price: f64,
+    /// 现货指数价格
+    #[serde(rename = "i", deserialize_with = "string_as_f64")]
+    pub index_price: f64,
+    /// 预估结算价，尽在结算前最后一小时有参考价值
+    #[serde(rename = "P", deserialize_with = "string_as_f64")]
+    pub estimate_price: f64,
+    /// 资金费率
+    #[serde(rename = "r", deserialize_with = "string_as_f64")]
+    pub rate: f64,
+    /// 下次资金时间
+    #[serde(rename = "T")]
+    pub trade_time: i64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -575,5 +605,9 @@ impl<R: serde::de::DeserializeOwned> WebsocketResponse<R>
             }
             _ => unreachable!(),
         }
+    }
+
+    fn close_stream(&mut self) {
+        self.close(None).unwrap();
     }
 }

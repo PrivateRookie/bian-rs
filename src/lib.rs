@@ -3,6 +3,7 @@ use std::net::SocketAddr;
 use bian_proc::api;
 use error::{APIError, BianResult};
 use hmac::{Hmac, Mac, NewMac};
+use response::WebsocketResponse;
 use sha2::Sha256;
 use tungstenite::{
     client::{connect_with_proxy, ProxyAutoStream},
@@ -267,17 +268,82 @@ impl UFuturesProxyWSClient {
     }
 
     /// 同一价格、同一方向、同一时间(100ms计算)的trade会被聚合为一条
-    pub fn agg_trade(&self, symbol: String) -> BianResult<WebSocket<ProxyAutoStream>> {
+    pub fn agg_trade(
+        &self,
+        symbol: String,
+    ) -> BianResult<impl WebsocketResponse<response::WSAggTrade>> {
         self.build_single(symbol, "aggTrade")
     }
 
     /// 同一价格、同一方向、同一时间(100ms计算)的trade会被聚合为一条
-    pub fn agg_trade_multi(&self, symbols: Vec<String>) -> BianResult<WebSocket<ProxyAutoStream>> {
+    pub fn agg_trade_multi(
+        &self,
+        symbols: Vec<String>,
+    ) -> BianResult<impl WebsocketResponse<response::WSAggTrade>> {
         self.build_multi(symbols, "aggTrade")
     }
 
+    /// 最新标记价格
+    ///
+    /// freq == 1 时更新速度为1s, 否则为3s
+    pub fn mark_price(
+        &self,
+        symbol: String,
+        freq: usize,
+    ) -> BianResult<impl WebsocketResponse<response::WSPrice>> {
+        let channel = if freq == 1 {
+            "markPrice@1s"
+        } else {
+            "markPrice"
+        };
+        self.build_single(symbol, channel)
+    }
+
+    /// 最新标记价格
+    ///
+    /// freq == 1 时更新速度为1s, 否则为3s
+    pub fn mark_price_multi(
+        &self,
+        symbols: Vec<String>,
+        freq: usize,
+    ) -> BianResult<impl WebsocketResponse<response::WSPrice>> {
+        let channel = if freq == 1 {
+            "markPrice@1s"
+        } else {
+            "markPrice"
+        };
+        self.build_multi(symbols, channel)
+    }
+
+    /// 全市场最新标记价格
+    ///
+    /// freq == 1 时更新速度为1s, 否则为3s
+    pub fn arr(
+        &self,
+        symbol: String,
+        freq: usize,
+    ) -> BianResult<impl WebsocketResponse<response::WSPrice>> {
+        let channel = if freq == 1 { "arr@1s" } else { "arr" };
+        self.build_single(symbol, channel)
+    }
+
+    /// 全市场最新标记价格
+    ///
+    /// freq == 1 时更新速度为1s, 否则为3s
+    pub fn arr_multi(
+        &self,
+        symbols: Vec<String>,
+        freq: usize,
+    ) -> BianResult<impl WebsocketResponse<response::WSPrice>> {
+        let channel = if freq == 1 { "arr@1s" } else { "arr" };
+        self.build_multi(symbols, channel)
+    }
+
     /// 按Symbol刷新的24小时完整ticker信息
-    pub fn symbol_ticker(&self, symbol: String) -> BianResult<WebSocket<ProxyAutoStream>> {
+    pub fn symbol_ticker(
+        &self,
+        symbol: String,
+    ) -> BianResult<impl WebsocketResponse<response::Ticker>> {
         self.build_single(symbol, "ticker")
     }
 
@@ -285,7 +351,7 @@ impl UFuturesProxyWSClient {
     pub fn symbol_ticker_multi(
         &self,
         symbols: Vec<String>,
-    ) -> BianResult<WebSocket<ProxyAutoStream>> {
+    ) -> BianResult<impl WebsocketResponse<response::Ticker>> {
         self.build_multi(symbols, "ticker")
     }
 }
