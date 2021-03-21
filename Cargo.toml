@@ -8,7 +8,7 @@ license-file = "LICENSE"
 readme = "README.md"
 homepage = 'https://github.com/PrivateRookie/bian-rs'
 repository = 'https://github.com/PrivateRookie/bian-rs'
-keywords = ["Binance", "数字货币", "币安"]
+keywords = ["Binance", "bitcoin", "websocket", "proxy"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -24,8 +24,9 @@ dotenv = "0.15.0"
 hex = "0.4.3"
 sha2 = "0.9.3"
 chrono = { version = "0.4", features = ["serde"] }
+# bian-proc = { version = "0.1" }
 bian-proc = { path = "./bian-proc", version = "0.1" }
-tungstenite = { git = "https://github.com/PrivateRookie/tungstenite-rs.git", branch = "proxy" }
+tungstenite = { git = "https://github.com/PrivateRookie/tungstenite-rs.git", branch = "proxy", version = "0.13" }
 thiserror = "1"
 
 [workspace]
