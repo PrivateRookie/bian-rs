@@ -1,6 +1,6 @@
 [package]
 name = "bian-rs"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["PrivateRookie <996514515@qq.com>"]
 edition = "2018"
 description = "币安 Rust async SDK | binance Rust async SDK"
