@@ -24,8 +24,9 @@ dotenv = "0.15.0"
 hex = "0.4.3"
 sha2 = "0.9.3"
 chrono = { version = "0.4", features = ["serde"] }
+# bian-proc = { version = "0.1" }
 bian-proc = { path = "./bian-proc", version = "0.1" }
-tungstenite = { git = "https://github.com/PrivateRookie/tungstenite-rs.git", branch = "proxy" }
+tungstenite = { git = "https://github.com/PrivateRookie/tungstenite-rs.git", branch = "proxy", version = "0.13" }
 thiserror = "1"
 
 [workspace]
