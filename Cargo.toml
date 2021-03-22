@@ -12,6 +12,9 @@ keywords = ["Binance", "bitcoin", "websocket", "proxy"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[dev-dependencies]
+bian-proc = { version = "0.1", path = "./bian-proc" }
+
 [dependencies]
 tokio = { version = "1.2.0", features = ["full"] }
 reqwest = { version = "0.11.1", features = ["json"] }
@@ -24,8 +27,7 @@ dotenv = "0.15.0"
 hex = "0.4.3"
 sha2 = "0.9.3"
 chrono = { version = "0.4", features = ["serde"] }
-# bian-proc = { version = "0.1" }
-bian-proc = { path = "./bian-proc", version = "0.1" }
+bian-proc = { version = "0.1", path = "./bian-proc" }
 tungstenite = { git = "https://github.com/PrivateRookie/tungstenite-rs.git", branch = "proxy", version = "0.13" }
 thiserror = "1"
 
