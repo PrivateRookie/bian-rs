@@ -401,20 +401,62 @@ impl UFuturesProxyWSClient {
         self.build_single(symbols, &channel)
     }
 
+    /// 按 symbol 的精简 Ticker
+    ///
+    /// Update Speed: 500ms
+    pub fn mini_ticker(
+        &self,
+        symbol: String,
+    ) -> BianResult<impl WebsocketResponse<response::WSMiniTicker>> {
+        self.build_single(symbol, "miniTicker")
+    }
+
+    /// 按 symbol 的精简 Ticker
+    ///
+    /// Update Speed: 500ms
+    pub fn mini_ticker_multi(
+        &self,
+        symbols: Vec<String>,
+    ) -> BianResult<impl WebsocketResponse<response::WSMiniTicker>> {
+        self.build_multi(symbols, "miniTicker")
+    }
+
+    /// 全市场的精简 Ticker
+    ///
+    /// 所有symbol24小时精简ticker信息.需要注意的是，只有发生变化的ticker更新才会被推送。
+    /// Update Speed: 1000ms
+    pub fn all_mini_ticker(
+        &self,
+    ) -> BianResult<impl WebsocketResponse<Vec<response::WSMiniTicker>>> {
+        self.build_single(String::new(), "!miniTicker@arr")
+    }
+
     /// 按Symbol刷新的24小时完整ticker信息
+    ///
+    /// Update Speed: 500ms
     pub fn symbol_ticker(
         &self,
         symbol: String,
-    ) -> BianResult<impl WebsocketResponse<response::Ticker>> {
+    ) -> BianResult<impl WebsocketResponse<response::WSTicker>> {
         self.build_single(symbol, "ticker")
     }
 
     /// 按Symbol刷新的24小时完整ticker信息
+    ///
+    /// Update Speed: 500ms
     pub fn symbol_ticker_multi(
         &self,
         symbols: Vec<String>,
-    ) -> BianResult<impl WebsocketResponse<response::Ticker>> {
+    ) -> BianResult<impl WebsocketResponse<response::WSTicker>> {
         self.build_multi(symbols, "ticker")
+    }
+
+    /// 全市场的完整Ticker
+    ///
+    /// 所有symbol 24小时完整ticker信息.需要注意的是，只有发生变化的ticker更新才会被推送。
+    /// Update Speed: 1000ms
+    pub fn all_symbol_ticker(&self) -> BianResult<impl WebsocketResponse<Vec<response::WSTicker>>> {
+        self.build_single(String::new(), "!ticker@arr")
     }
 }
 

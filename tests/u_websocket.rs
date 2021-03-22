@@ -108,12 +108,32 @@ fn test_ws_continuous_kline() {
         dbg!(stream.read_stream_multi().unwrap());
     }
 }
+
+#[test]
+fn test_ws_mini_ticker() {
+    let client = init_client();
+    let mut stream = client.mini_ticker("btcusdt".to_string()).unwrap();
+    for _ in 0..5 {
+        dbg!(stream.read_stream_single().unwrap());
+    }
+    let mut stream = client
+        .mini_ticker_multi(vec!["btcusdt".to_string(), "ethusdt".to_string()])
+        .unwrap();
+    for _ in 0..5 {
+        dbg!(stream.read_stream_multi().unwrap());
+    }
+    let mut stream = client.all_mini_ticker().unwrap();
+    for _ in 0..10 {
+        dbg!(stream.read_stream_single().unwrap());
+    }
+}
+
 #[test]
 fn test_ws_ticker() {
     let client = init_client();
     let mut stream = client.symbol_ticker("ethusdt".to_string()).unwrap();
     for _ in 0..10 {
-        let msg: response::Ticker = stream.read_stream_single().unwrap();
+        let msg: response::WSTicker = stream.read_stream_single().unwrap();
         dbg!(msg);
     }
     stream.close_stream();
@@ -122,8 +142,14 @@ fn test_ws_ticker() {
         .symbol_ticker_multi(vec!["btcusdt".to_string(), "ethusdt".to_string()])
         .unwrap();
     for _ in 0..20 {
-        let msg: response::Ticker = stream.read_stream_multi().unwrap();
+        let msg: response::WSTicker = stream.read_stream_multi().unwrap();
         dbg!(msg);
+    }
+    stream.close_stream();
+
+    let mut stream = client.all_symbol_ticker().unwrap();
+    for _ in 0..10 {
+        dbg!(stream.read_stream_single().unwrap());
     }
     stream.close_stream();
 }

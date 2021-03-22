@@ -618,39 +618,86 @@ pub struct KData {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Ticker {
+pub struct WSMiniTicker {
+    /// 事件类型
     #[serde(rename = "e")]
     pub event_type: String,
+    /// 事件时间(ms)
     #[serde(rename = "E")]
     pub event_time: i64,
+    /// 交易对
     #[serde(rename = "s")]
     pub pair: String,
-    #[serde(rename = "p", deserialize_with = "string_as_f64")]
-    pub price_24h_chg: f64,
-    #[serde(rename = "P", deserialize_with = "string_as_f64")]
-    pub price_24h_chg_pct: f64,
-    #[serde(rename = "w", deserialize_with = "string_as_f64")]
-    pub price_avg: f64,
+    /// 最新成交价格
     #[serde(rename = "c", deserialize_with = "string_as_f64")]
     pub price_last_trade: f64,
-    #[serde(rename = "Q", deserialize_with = "string_as_f64")]
-    pub volume_last_trade: f64,
+    /// 24小时前开始第一笔成交价格
     #[serde(rename = "o", deserialize_with = "string_as_f64")]
     pub price_24h_first_trade: f64,
+    /// 24小时内最高成交价
     #[serde(rename = "h", deserialize_with = "string_as_f64")]
-    pub price_24h_highest: f64,
+    pub high: f64,
+    /// 24小时内最低成交价
     #[serde(rename = "l", deserialize_with = "string_as_f64")]
-    pub price_24h_lowest: f64,
+    pub low: f64,
+    /// 成交量
     #[serde(rename = "v", deserialize_with = "string_as_f64")]
-    pub volume_24h: f64,
+    pub volume: f64,
+    /// 成交额
     #[serde(rename = "q", deserialize_with = "string_as_f64")]
-    pub amount_24h: f64,
+    pub amount: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSTicker {
+    /// 事件类型
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 交易对
+    #[serde(rename = "s")]
+    pub pair: String,
+    /// 24小时价格变化
+    #[serde(rename = "p", deserialize_with = "string_as_f64")]
+    pub price_24h_chg: f64,
+    /// 24小时价格变化(百分比)
+    #[serde(rename = "P", deserialize_with = "string_as_f64")]
+    pub price_24h_chg_pct: f64,
+    /// 平均价格
+    #[serde(rename = "w", deserialize_with = "string_as_f64")]
+    pub price_avg: f64,
+    /// 最新成交价格
+    #[serde(rename = "c", deserialize_with = "string_as_f64")]
+    pub price_last_trade: f64,
+    /// 最新成交价格上的成交量
+    #[serde(rename = "Q", deserialize_with = "string_as_f64")]
+    pub volume_last_trade: f64,
+    /// 24小时内第一笔成交的价格
+    #[serde(rename = "o", deserialize_with = "string_as_f64")]
+    pub price_24h_first_trade: f64,
+    /// 24小时内最高成交价
+    #[serde(rename = "h", deserialize_with = "string_as_f64")]
+    pub high: f64,
+    /// 24小时内最低成交价
+    #[serde(rename = "l", deserialize_with = "string_as_f64")]
+    pub low: f64,
+    /// 24小时内成交量
+    #[serde(rename = "v", deserialize_with = "string_as_f64")]
+    pub volume: f64,
+    /// 24小时内成交额
+    #[serde(rename = "q", deserialize_with = "string_as_f64")]
+    pub amount: f64,
     #[serde(rename = "O")]
     pub open_time: i64,
     #[serde(rename = "C")]
     pub close_time: i64,
+    /// 24小时内第一笔成交交易ID
     #[serde(rename = "F")]
     pub first_trade_id: u64,
+    /// 24小时内最后一笔成交交易ID
     #[serde(rename = "L")]
     pub last_trade_id: f64,
     #[serde(rename = "n")]
