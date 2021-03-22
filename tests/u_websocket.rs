@@ -52,6 +52,63 @@ fn test_ws_mark_price() {
 }
 
 #[test]
+fn test_ws_mark_price_arr() {
+    let client = init_client();
+    let mut stream = client.mark_price_arr(1).unwrap();
+    for _ in 0..3 {
+        let msg = stream.read_stream_single().unwrap();
+        dbg!(msg);
+    }
+    stream.close_stream();
+}
+
+#[test]
+fn test_ws_kline() {
+    let client = init_client();
+    let mut stream = client
+        .kline("btcusdt".to_string(), enums::Interval::Min1)
+        .unwrap();
+    for _ in 0..5 {
+        dbg!(stream.read_stream_single().unwrap());
+    }
+    stream.close_stream();
+    let mut stream = client
+        .kline_multi(
+            vec!["btcusdt".to_string(), "ethusdt".to_string()],
+            enums::Interval::Min1,
+        )
+        .unwrap();
+    for _ in 0..10 {
+        dbg!(stream.read_stream_multi().unwrap());
+    }
+}
+
+#[test]
+fn test_ws_continuous_kline() {
+    let client = init_client();
+    let mut stream = client
+        .continuous_kline(
+            "btc".to_string(),
+            enums::ContractType::Perpetual,
+            enums::Interval::Min1,
+        )
+        .unwrap();
+    for _ in 0..5 {
+        dbg!(stream.read_stream_single().unwrap());
+    }
+    stream.close_stream();
+    let mut stream = client
+        .continuous_kline_multi(
+            vec!["btcusdt".to_string(), "ethusdt".to_string()],
+            enums::ContractType::Perpetual,
+            enums::Interval::Min1,
+        )
+        .unwrap();
+    for _ in 0..10 {
+        dbg!(stream.read_stream_multi().unwrap());
+    }
+}
+#[test]
 fn test_ws_ticker() {
     let client = init_client();
     let mut stream = client.symbol_ticker("ethusdt".to_string()).unwrap();

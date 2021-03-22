@@ -16,6 +16,15 @@ pub enum ContractType {
     NextMonthDelivering,
 }
 
+impl ToString for ContractType {
+    fn to_string(&self) -> String {
+        serde_json::to_string(self)
+            .unwrap()
+            .trim_matches('"')
+            .to_string()
+    }
+}
+
 /// 合约状态
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -138,6 +147,15 @@ pub enum Interval {
     Week1,
     #[serde(rename = "1M")]
     Month1,
+}
+
+impl ToString for Interval {
+    fn to_string(&self) -> String {
+        serde_json::to_string(self)
+            .unwrap()
+            .trim_matches('"')
+            .to_string()
+    }
 }
 
 pub enum RateLimitType {

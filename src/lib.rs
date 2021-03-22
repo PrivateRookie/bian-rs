@@ -1,6 +1,7 @@
 use std::net::SocketAddr;
 
 use bian_proc::api;
+use enums::{ContractType, Interval};
 use error::{APIError, BianResult};
 use hmac::{Hmac, Mac, NewMac};
 use response::WebsocketResponse;
@@ -239,10 +240,13 @@ impl UFuturesProxyWSClient {
         symbol: String,
         channel: &str,
     ) -> BianResult<WebSocket<ProxyAutoStream>> {
-        let url = self
-            .base_url
-            .join(&format!("ws/{}@{}", symbol, channel))
-            .unwrap();
+        let url = if symbol.is_empty() {
+            self.base_url.join(&format!("ws/{}", channel)).unwrap()
+        } else {
+            self.base_url
+                .join(&format!("ws/{}@{}", symbol, channel))
+                .unwrap()
+        };
         let (socket, _) = connect_with_proxy(url, self.proxy, None, 3)
             .map_err(|e| APIError::WSConnectError(e.to_string()))?;
         Ok(socket)
@@ -318,25 +322,83 @@ impl UFuturesProxyWSClient {
     /// 全市场最新标记价格
     ///
     /// freq == 1 时更新速度为1s, 否则为3s
-    pub fn arr(
+    pub fn mark_price_arr(
         &self,
-        symbol: String,
         freq: usize,
-    ) -> BianResult<impl WebsocketResponse<response::WSPrice>> {
-        let channel = if freq == 1 { "arr@1s" } else { "arr" };
-        self.build_single(symbol, channel)
+    ) -> BianResult<impl WebsocketResponse<Vec<response::WSPrice>>> {
+        let channel = if freq == 1 {
+            "!markPrice@arr@1s"
+        } else {
+            "!markPrice@arr"
+        };
+        self.build_single("".to_string(), channel)
     }
 
-    /// 全市场最新标记价格
+    /// K线
     ///
-    /// freq == 1 时更新速度为1s, 否则为3s
-    pub fn arr_multi(
+    /// K线stream逐秒推送所请求的K线种类(最新一根K线)的更新。推送间隔250毫秒(如有刷新)
+    pub fn kline(
+        &self,
+        symbol: String,
+        interval: Interval,
+    ) -> BianResult<impl WebsocketResponse<response::WSKline>> {
+        let channel = format!("kline_{}", interval.to_string());
+        dbg!(&channel);
+        self.build_single(symbol, &channel)
+    }
+
+    /// K线
+    ///
+    /// K线stream逐秒推送所请求的K线种类(最新一根K线)的更新。推送间隔250毫秒(如有刷新)
+    pub fn kline_multi(
         &self,
         symbols: Vec<String>,
-        freq: usize,
-    ) -> BianResult<impl WebsocketResponse<response::WSPrice>> {
-        let channel = if freq == 1 { "arr@1s" } else { "arr" };
-        self.build_multi(symbols, channel)
+        interval: Interval,
+    ) -> BianResult<impl WebsocketResponse<response::WSKline>> {
+        let channel = format!("kline_{}", interval.to_string());
+        dbg!(&channel);
+        self.build_multi(symbols, &channel)
+    }
+
+    /// 连续合约K线
+    ///
+    /// K线stream逐秒推送所请求的K线种类(最新一根K线)的更新。Update Speed: 250ms
+    ///
+    /// 允许的 contract_type
+    /// - PERPETUAL 永续合约
+    /// - CURRENT_MONTH 当月交割合约
+    /// - NEXT_MONTH 次月交割合约
+    pub fn continuous_kline(
+        &self,
+        pair: String,
+        contract_type: ContractType,
+        interval: Interval,
+    ) -> BianResult<impl WebsocketResponse<response::WSContinuousKline>> {
+        let symbol = dbg!(format!("{}_{}", pair, contract_type.to_string()));
+        let channel = format!("continuousKline_{}", interval.to_string());
+        self.build_single(symbol, &channel)
+    }
+
+    /// 连续合约K线
+    ///
+    /// K线stream逐秒推送所请求的K线种类(最新一根K线)的更新。Update Speed: 250ms
+    ///
+    /// 允许的 contract_type
+    /// - PERPETUAL 永续合约
+    /// - CURRENT_MONTH 当月交割合约
+    /// - NEXT_MONTH 次月交割合约
+    pub fn continuous_kline_multi(
+        &self,
+        pairs: Vec<String>,
+        contract_type: ContractType,
+        interval: Interval,
+    ) -> BianResult<impl WebsocketResponse<response::WSContinuousKline>> {
+        let symbols = pairs
+            .into_iter()
+            .map(|p| format!("{}_{}", p, contract_type.to_string()))
+            .collect();
+        let channel = format!("continuousKline_{}", interval.to_string());
+        self.build_single(symbols, &channel)
     }
 
     /// 按Symbol刷新的24小时完整ticker信息

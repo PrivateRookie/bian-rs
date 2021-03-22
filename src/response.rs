@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fmt, usize};
 
-use crate::enums::{OrderSide, OrderStatus, OrderType, TimeInForce};
+use crate::enums::{ContractType, Interval, OrderSide, OrderStatus, OrderType, TimeInForce};
 use crate::error::{APIError, BianResult};
 use serde::{
     de::{Unexpected, Visitor},
@@ -521,6 +521,99 @@ pub struct WSPrice {
     /// 下次资金时间
     #[serde(rename = "T")]
     pub trade_time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSKline {
+    /// 事件类型 aggTrade
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 交易对
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// K 线数据
+    #[serde(rename = "k")]
+    pub data: KData,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSContinuousKline {
+    /// 事件类型 aggTrade
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 交易对
+    #[serde(rename = "ps")]
+    pub pair: String,
+    /// 合约类型
+    #[serde(rename = "ct")]
+    pub contract_type: ContractType,
+    /// K 线数据
+    #[serde(rename = "k")]
+    pub data: KData,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct KData {
+    /// 这根K线的起始时间
+    #[serde(rename = "t")]
+    pub open_time: i64,
+    /// 这根K线的结束时间
+    #[serde(rename = "T")]
+    pub close_time: i64,
+    /// 交易对
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// K线间隔
+    #[serde(rename = "i")]
+    pub interval: Interval,
+    /// 这根K线期间第一笔成交ID
+    #[serde(rename = "f")]
+    pub first_id: usize,
+    /// 这根K线期间末一笔成交ID
+    #[serde(rename = "L")]
+    pub last_id: usize,
+    /// 这根K线期间第一笔成交价
+    #[serde(rename = "o", deserialize_with = "string_as_f64")]
+    pub first_price: f64,
+    /// 这根K线期间末一笔成交价
+    #[serde(rename = "c", deserialize_with = "string_as_f64")]
+    pub last_price: f64,
+    /// 这根K线期间最高成交价
+    #[serde(rename = "h", deserialize_with = "string_as_f64")]
+    pub high: f64,
+    /// 这根K线期间最低成交价
+    #[serde(rename = "l", deserialize_with = "string_as_f64")]
+    pub low: f64,
+    /// 这根K线期间成交量
+    #[serde(rename = "v", deserialize_with = "string_as_f64")]
+    pub volume: f64,
+    /// 这根K线期间成交笔数
+    #[serde(rename = "n")]
+    pub trade_num: usize,
+    /// 这根K线是否完结(是否已经开始下一根K线)
+    #[serde(rename = "x")]
+    pub is_end: bool,
+    /// 这根K线期间成交额
+    #[serde(rename = "q", deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    /// 主动买入的成交量
+    #[serde(rename = "V", deserialize_with = "string_as_f64")]
+    pub take_volume: f64,
+    /// 主动买入的成交额
+    #[serde(rename = "Q", deserialize_with = "string_as_f64")]
+    pub take_qty: f64,
+    /// 忽略此参数
+    #[serde(rename = "B")]
+    pub __ignore: String,
 }
 
 #[derive(Debug, Deserialize)]
