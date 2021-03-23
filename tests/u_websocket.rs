@@ -153,3 +153,55 @@ fn test_ws_ticker() {
     }
     stream.close_stream();
 }
+
+#[test]
+fn test_ws_book_ticker() {
+    let client = init_client();
+    let mut stream = client.book_ticker("ethusdt".to_string()).unwrap();
+    for _ in 0..10 {
+        let msg = stream.read_stream_single().unwrap();
+        dbg!(msg);
+    }
+    stream.close_stream();
+
+    let mut stream = client
+        .book_ticker_multi(vec!["btcusdt".to_string(), "ethusdt".to_string()])
+        .unwrap();
+    for _ in 0..20 {
+        let msg = stream.read_stream_multi().unwrap();
+        dbg!(msg);
+    }
+    stream.close_stream();
+
+    let mut stream = client.all_book_ticker().unwrap();
+    for _ in 0..10 {
+        dbg!(stream.read_stream_single().unwrap());
+    }
+    stream.close_stream();
+}
+
+#[test]
+fn test_ws_force_order() {
+    let client = init_client();
+    let mut stream = client.force_order("ethusdt".to_string()).unwrap();
+    for _ in 0..10 {
+        let msg = stream.read_stream_single().unwrap();
+        dbg!(msg);
+    }
+    stream.close_stream();
+
+    let mut stream = client
+        .force_order_multi(vec!["btcusdt".to_string(), "ethusdt".to_string()])
+        .unwrap();
+    for _ in 0..20 {
+        let msg = stream.read_stream_multi().unwrap();
+        dbg!(msg);
+    }
+    stream.close_stream();
+
+    let mut stream = client.all_force_order().unwrap();
+    for _ in 0..10 {
+        dbg!(stream.read_stream_single().unwrap());
+    }
+    stream.close_stream();
+}

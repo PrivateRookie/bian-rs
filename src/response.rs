@@ -704,6 +704,89 @@ pub struct WSTicker {
     pub trade_count: usize,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSBookTicker {
+    /// 事件类型
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 更新ID
+    #[serde(rename = "u")]
+    pub update_id: usize,
+    /// 事件推送时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 撮合时间
+    #[serde(rename = "T")]
+    pub matching_time: i64,
+    /// 交易对
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// 买单最优挂单价格
+    #[serde(rename = "b", deserialize_with = "string_as_f64")]
+    pub buy_price: f64,
+    /// 买单最优挂单价格
+    #[serde(rename = "B", deserialize_with = "string_as_f64")]
+    pub buy_amount: f64,
+    /// 买单最优挂单价格
+    #[serde(rename = "a", deserialize_with = "string_as_f64")]
+    pub sell_price: f64,
+    /// 买单最优挂单价格
+    #[serde(rename = "A", deserialize_with = "string_as_f64")]
+    pub sell_amount: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSForceOrder {
+    // 事件类型
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件推送时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    #[serde(rename = "o")]
+    pub order_data: OrderData,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OrderData {
+    /// 交易对
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// 订单方向
+    #[serde(rename = "S")]
+    pub direction: OrderSide,
+    /// 订单类型
+    #[serde(rename = "o")]
+    pub order_type: OrderType,
+    /// 有效方式
+    #[serde(rename = "f")]
+    pub force: TimeInForce,
+    /// 订单数量
+    #[serde(rename = "q", deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    /// 订单价格
+    #[serde(rename = "p", deserialize_with = "string_as_f64")]
+    pub price: f64,
+    /// 平均价格
+    #[serde(rename = "ap", deserialize_with = "string_as_f64")]
+    pub avg_price: f64,
+    /// 订单状态
+    #[serde(rename = "X")]
+    pub order_status: OrderStatus,
+    /// 订单最近成交量
+    #[serde(rename = "l", deserialize_with = "string_as_f64")]
+    pub latest_amount: f64,
+    /// 订单累计成交量
+    #[serde(rename = "z", deserialize_with = "string_as_f64")]
+    pub sum_amount: f64,
+    /// 交易时间
+    #[serde(rename = "T")]
+    pub trade_time: i64,
+}
+
 impl<R: serde::de::DeserializeOwned> WebsocketResponse<R>
     for tungstenite::WebSocket<ProxyAutoStream>
 {

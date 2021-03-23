@@ -458,6 +458,60 @@ impl UFuturesProxyWSClient {
     pub fn all_symbol_ticker(&self) -> BianResult<impl WebsocketResponse<Vec<response::WSTicker>>> {
         self.build_single(String::new(), "!ticker@arr")
     }
+
+    /// 按Symbol的最优挂单信息
+    ///
+    /// 实时推送指定交易对最优挂单信息 Update Speed: 实时
+    pub fn book_ticker(
+        &self,
+        symbol: String,
+    ) -> BianResult<impl WebsocketResponse<response::WSBookTicker>> {
+        self.build_single(symbol, "bookTicker")
+    }
+
+    /// 按Symbol的最优挂单信息
+    ///
+    /// 实时推送指定交易对最优挂单信息 Update Speed: 实时
+    pub fn book_ticker_multi(
+        &self,
+        symbols: Vec<String>,
+    ) -> BianResult<impl WebsocketResponse<response::WSBookTicker>> {
+        self.build_multi(symbols, "bookTicker")
+    }
+
+    /// 全市场最优挂单信息
+    ///
+    ///所有交易对交易对最优挂单信息
+    pub fn all_book_ticker(&self) -> BianResult<impl WebsocketResponse<response::WSBookTicker>> {
+        self.build_single(String::new(), "!bookTicker")
+    }
+
+    /// 强平订单
+    ///
+    /// 推送特定symbol的强平订单信息 Update Speed: 实时
+    pub fn force_order(
+        &self,
+        symbol: String,
+    ) -> BianResult<impl WebsocketResponse<response::WSForceOrder>> {
+        self.build_single(symbol, "forceOrder")
+    }
+
+    /// 强平订单
+    ///
+    /// 推送特定symbol的强平订单信息 Update Speed: 实时
+    pub fn force_order_multi(
+        &self,
+        symbols: Vec<String>,
+    ) -> BianResult<impl WebsocketResponse<response::WSForceOrder>> {
+        self.build_multi(symbols, "forceOrder")
+    }
+
+    /// 全市场强平订单
+    ///
+    /// 推送全市场强平订单信息 Update Speed: 实时
+    pub fn all_force_order(&self) -> BianResult<impl WebsocketResponse<response::WSForceOrder>> {
+        self.build_single(String::new(), "!forceOrder@arr")
+    }
 }
 
 /// U 本位合约 websocket 客户端
