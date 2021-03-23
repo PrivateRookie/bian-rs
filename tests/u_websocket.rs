@@ -205,3 +205,18 @@ fn test_ws_force_order() {
     }
     stream.close_stream();
 }
+
+#[test]
+fn test_limit_depth() {
+    let client = init_client();
+    let mut stream = client.limit_depth("BTCUSDT".to_string(), 5, 100).unwrap();
+    for _ in 0..5 {
+        dbg!(stream.read_stream_single().unwrap());
+    }
+    let mut stream = client
+        .limit_depth_multi(vec!["btcusdt".to_string(), "ethusdt".to_string()], 5, 100)
+        .unwrap();
+    for _ in 0..10 {
+        dbg!(stream.read_stream_multi().unwrap());
+    }
+}

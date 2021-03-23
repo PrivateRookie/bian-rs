@@ -787,6 +787,38 @@ pub struct OrderData {
     pub trade_time: i64,
 }
 
+/// 有限档深度信息
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSDepth {
+    /// 事件类型
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件推送时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 交易时间
+    #[serde(rename = "T")]
+    pub trade_time: i64,
+    /// 交易对
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// 更新ID
+    #[serde(rename = "u")]
+    pub update_id: usize,
+    /// ???
+    #[serde(rename = "U")]
+    pub upper_u: usize,
+    /// ???
+    pub pu: usize,
+    /// 买方
+    #[serde(rename = "b")]
+    pub buy: Vec<(String, String)>,
+    /// 卖方
+    #[serde(rename = "a")]
+    pub sell: Vec<(String, String)>,
+}
+
 impl<R: serde::de::DeserializeOwned> WebsocketResponse<R>
     for tungstenite::WebSocket<ProxyAutoStream>
 {
