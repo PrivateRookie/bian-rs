@@ -21,7 +21,7 @@ async fn test_ping() {
 async fn test_balance() {
     let client = init_client();
     let now = chrono::Utc::now();
-    let params = params::AccountBalanceV2 {
+    let params = params::PTimestampPram {
         timestamp: now.timestamp_millis(),
         recv_window: None,
     };
@@ -314,4 +314,15 @@ async fn test_index_info() {
 async fn test_index_infos() {
     let client = init_client();
     dbg!(client.index_infos().await.unwrap());
+}
+
+#[tokio::test]
+async fn test_position_side() {
+    let client = init_client();
+    let now = chrono::Utc::now();
+    let param = params::PTimestampPram {
+        timestamp: now.timestamp_millis(),
+        recv_window: None,
+    };
+    dbg!(client.get_position_side(param).await.unwrap());
 }

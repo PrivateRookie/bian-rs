@@ -446,6 +446,14 @@ pub struct BaseAsset {
     pub weight_in_percentage: f64,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PositionSide {
+    /// "true": 双向持仓模式；"false": 单向持仓模式
+    pub dual_side_position: bool
+}
+
+
 pub trait WebsocketResponse<R: serde::de::DeserializeOwned> {
     fn read_stream_single(&mut self) -> BianResult<R>;
     fn read_stream_multi(&mut self) -> BianResult<R>;

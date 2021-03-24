@@ -117,7 +117,7 @@ pub struct PLvtKlines {
 }
 
 #[derive(Debug, Serialize)]
-pub struct AccountBalanceV2 {
+pub struct PTimestampPram {
     pub recv_window: Option<i64>,
     pub timestamp: i64,
 }

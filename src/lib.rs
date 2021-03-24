@@ -222,8 +222,20 @@ impl UFuturesHttpClient {
     #[api(SGET "fapi/v2/balance")]
     pub async fn account_balance_v2(
         &self,
-        param: params::AccountBalanceV2,
+        param: params::PTimestampPram,
     ) -> BianResult<Vec<response::AccountBalance>> {
+    }
+
+    // **********************************************
+    //                  账户和交易接口
+    // **********************************************
+
+    ///查询持仓模式
+    #[api(SGET "fapi/v1/positionSide/dual")]
+    pub async fn get_position_side(
+        &self,
+        param: params::PTimestampPram,
+    ) -> BianResult<response::PositionSide> {
     }
 }
 
