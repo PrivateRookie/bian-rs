@@ -410,3 +410,39 @@ pub struct PositionSide {
     /// "true": 双向持仓模式；"false": 单向持仓模式
     pub dual_side_position: bool,
 }
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Order {
+    pub client_order_id: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cum_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cum_quote: f64,
+    pub order_id: usize,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub avg_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub orig_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    pub reduce_only: bool,
+    pub side: OrderSide,
+    pub position_side: PositionSide,
+    pub status: OrderStatus,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub stop_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub close_position: f64,
+    pub symbol: String,
+    pub time_in_force: TimeInForce,
+    #[serde(rename = "type")]
+    pub order_type: OrderType,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub activate_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price_rate: f64,
+    pub update_time: i64,
+    pub working_type: String,
+    pub price_protect: bool,
+}

@@ -73,8 +73,8 @@ pub fn api(attr: TokenStream, item: TokenStream) -> TokenStream {
         .send()
         .await?;
         let resp =APIError::check_resp(resp).await?;
-        let json_resp = resp.json()
-        .await
+        let resp_text = dbg!(resp.text().await.unwrap());
+        let json_resp = serde_json::from_str(&resp_text)
         .map_err(|e| crate::error::APIError::DecodeError(e.to_string()))?;
         Ok(json_resp)
     };

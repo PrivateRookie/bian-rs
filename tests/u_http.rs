@@ -11,6 +11,14 @@ fn init_client() -> UFuturesHttpClient {
     UFuturesHttpClient::new(&api_key, &secret_key, BASE_URL)
 }
 
+fn get_current_ts() -> params::PTimestamp {
+    let now = chrono::Utc::now();
+    params::PTimestamp {
+        timestamp: now.timestamp_millis(),
+        recv_window: None,
+    }
+}
+
 #[tokio::test]
 async fn test_ping() {
     let client = init_client();
@@ -339,4 +347,31 @@ async fn test_position_side() {
         recv_window: None,
     };
     dbg!(client.get_position_side(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_order_test() {
+    // let client = init_client();
+    // let ts = get_current_ts();
+    // let param = params::POrder {
+    //     symbol: "btcusdt".to_string(),
+    //     side: OrderSide::Buy,
+    //     position_side: None,
+    //     order_type: OrderType::Market,
+    //     reduce_only: Some(false),
+    //     quantity: Some(10.0),
+    //     price: None,
+    //     new_client_order_id: None,
+    //     stop_price: None,
+    //     close_position: None,
+    //     activation_price: None,
+    //     callback_rate: None,
+    //     time_in_force: None,
+    //     working_type: None,
+    //     price_protect: None,
+    //     new_order_resp_type: None,
+    //     ts,
+    // };
+    // let resp = client.order_test(param).await.unwrap();
+    // dbg!(resp);
 }

@@ -221,7 +221,7 @@ impl UFuturesHttpClient {
     // **********************************************
     //                  账户和交易接口
     // **********************************************
-    
+
     /// 账户余额V2
     #[api(SGET "fapi/v2/balance")]
     pub async fn account_balance_v2(
@@ -248,6 +248,10 @@ impl UFuturesHttpClient {
     ) -> BianResult<response::PositionSide> {
     }
 
+    /// 下单
+    /// [DOC](https://binance-docs.github.io/apidocs/futures/cn/#trade-2)
+    #[api(SPOST "fapi/v1/order")]
+    pub async fn order(&self, param: params::POrder) -> BianResult<response::Order> {}
 }
 
 /// U 本位合约 websocket 客户端(使用代理)
