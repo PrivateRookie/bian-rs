@@ -21,7 +21,7 @@ async fn test_ping() {
 async fn test_balance() {
     let client = init_client();
     let now = chrono::Utc::now();
-    let params = params::PTimestampPram {
+    let params = params::PTimestamp {
         timestamp: now.timestamp_millis(),
         recv_window: None,
     };
@@ -317,10 +317,24 @@ async fn test_index_infos() {
 }
 
 #[tokio::test]
+async fn test_update_position_side() {
+    let client = init_client();
+    let now = chrono::Utc::now();
+    let param = params::PPositionSideDual {
+        dual_side_position: false,
+        ts: params::PTimestamp {
+            timestamp: now.timestamp_millis(),
+            recv_window: None,
+        },
+    };
+    dbg!(client.update_position_side(param).await.unwrap());
+}
+
+#[tokio::test]
 async fn test_position_side() {
     let client = init_client();
     let now = chrono::Utc::now();
-    let param = params::PTimestampPram {
+    let param = params::PTimestamp {
         timestamp: now.timestamp_millis(),
         recv_window: None,
     };

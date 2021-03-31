@@ -146,6 +146,13 @@ pub enum SymbolFilter {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct CodeResponse {
+    pub code: usize,
+    pub msg: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Symbol {
     /// 交易对
     pub symbol: String,

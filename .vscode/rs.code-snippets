@@ -45,8 +45,21 @@
 		"prefix": "json_req",
 		"body": [
 			"#[derive(Debug, Serialize)]",
+			"#[serde(rename_all = \"camelCase\")]",
 			"pub struct $1 {",
 			"    $2",
+			"}"
+		]
+	},
+	"json request struct with ts": {
+		"prefix": "json_req",
+		"body": [
+			"#[derive(Debug, Serialize)]",
+			"#[serde(rename_all = \"camelCase\")]",
+			"pub struct $1 {",
+			"    $2",
+			"#[serde(flatten)]",
+			"pub ts: PTimestamp,",
 			"}"
 		]
 	},

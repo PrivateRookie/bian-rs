@@ -1,6 +1,6 @@
 use std::usize;
 
-use crate::enums::Interval;
+use crate::enums::{Interval, OrderSide, OrderType, PositionDirect, TimeInForce};
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -87,6 +87,7 @@ pub struct PFundingRate {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PForceOrder {
     pub symbol: Option<String>,
     pub start_time: Option<i64>,
@@ -97,6 +98,7 @@ pub struct PForceOrder {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PFutures {
     pub symbol: String,
     pub period: Interval,
@@ -107,6 +109,7 @@ pub struct PFutures {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PLvtKlines {
     pub symbol: String,
     pub interval: Interval,
@@ -117,7 +120,60 @@ pub struct PLvtKlines {
 }
 
 #[derive(Debug, Serialize)]
-pub struct PTimestampPram {
+#[serde(rename_all = "camelCase")]
+pub struct PTimestamp {
     pub recv_window: Option<i64>,
     pub timestamp: i64,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PPositionSideDual {
+    /// "true": 双向持仓模式；"false": 单向持仓模式
+    pub dual_side_position: bool,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct POrder {
+    /// 交易对
+    pub symbol: String,
+    /// 买卖方向 `SELL`, `BUY`
+    pub side: OrderSide,
+    /// 持仓方向，单向持仓模式下非必填，默认且仅可填`BOTH`;在双向持仓模式下必填,且仅可选择 `LONG` 或 `SHORT`
+    pub position_side: Option<PositionDirect>,
+    /// 订单类型 `LIMIT`, `MARKET`, `STOP`, `TAKE_PROFIT`, `STOP_MARKET`, `TAKE_PROFIT_MARKET`, `TRAILING_STOP_MARKET`
+    #[serde(rename = "type")]
+    pub order_type: OrderType,
+    /// `true`, `false`; 非双开模式下默认`false`；双开模式下不接受此参数； 使用`closePosition`不支持此参数。
+    pub reduce_only: Option<bool>,
+    /// 下单数量,使用`closePosition`不支持此参数。
+    pub quantity: Option<f64>,
+    /// 委托价格
+    pub price: Option<f64>,
+    /// 用户自定义的订单号，不可以重复出现在挂单中。如空缺系统会自动赋值。必须满足正则规则 `^[\.A-Z\:/a-z0-9_-]{1,36}$`
+    pub new_client_order_id: Option<String>,
+    /// 触发价, 仅 `STOP`, `STOP_MARKET`, `TAKE_PROFIT`, `TAKE_PROFIT_MARKET` 需要此参数
+    pub stop_price: Option<f64>,
+    /// `true`, `false`；触发后全部平仓，仅支持`STOP_MARKET`和`TAKE_PROFIT_MARKET`；不与`quantity`合用；自带只平仓效果，不与`reduceOnly` 合用
+    pub close_position: Option<f64>,
+    /// 追踪止损激活价格，仅`TRAILING_STOP_MARKET` 需要此参数, 默认为下单当前市场价格(支持不同`workingType`)
+    pub activation_price: Option<f64>,
+    /// 追踪止损回调比例，可取值范围[0.1, 5],其中 1代表1% ,仅`TRAILING_STOP_MARKET` 需要此参数
+    pub callback_rate: Option<f64>,
+    /// 有效方法
+    pub time_in_force: Option<TimeInForce>,
+    // TODO make it enum
+    /// stopPrice 触发类型: `MARK_PRICE`(标记价格), `CONTRACT_PRICE`(合约最新价). 默认 `CONTRACT_PRICE`
+    pub working_type: Option<String>,
+    // TODO make it enum
+    /// 条件单触发保护："TRUE","FALSE", 默认"FALSE". 仅 `STOP`, `STOP_MARKET`, `TAKE_PROFIT`, `TAKE_PROFIT_MARKET` 需要此参数
+    pub price_protect: Option<String>,
+    // TODO make it enum
+    /// "ACK", "RESULT", 默认 "ACK"
+    pub new_order_resp_type: Option<String>,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
 }

@@ -6,7 +6,10 @@ use error::{APIError, BianResult};
 use hmac::{Hmac, Mac, NewMac};
 use response::WebsocketResponse;
 use sha2::Sha256;
-use tungstenite::{WebSocket, client::{AutoGenericStream, connect_with_config}};
+use tungstenite::{
+    client::{connect_with_config, AutoGenericStream},
+    WebSocket,
+};
 
 pub mod enums;
 pub mod error;
@@ -219,7 +222,7 @@ impl UFuturesHttpClient {
     #[api(SGET "fapi/v2/balance")]
     pub async fn account_balance_v2(
         &self,
-        param: params::PTimestampPram,
+        param: params::PTimestamp,
     ) -> BianResult<Vec<response::AccountBalance>> {
     }
 
@@ -227,13 +230,24 @@ impl UFuturesHttpClient {
     //                  账户和交易接口
     // **********************************************
 
+    /// 更改持仓模式
+    ///
+    /// 变换用户在 所有symbol 合约上的持仓模式：双向持仓或单向持仓。
+    #[api(SPOST "fapi/v1/positionSide/dual")]
+    pub async fn update_position_side(
+        &self,
+        param: params::PPositionSideDual,
+    ) -> BianResult<response::CodeResponse> {
+    }
+
     ///查询持仓模式
     #[api(SGET "fapi/v1/positionSide/dual")]
     pub async fn get_position_side(
         &self,
-        param: params::PTimestampPram,
+        param: params::PTimestamp,
     ) -> BianResult<response::PositionSide> {
     }
+
 }
 
 /// U 本位合约 websocket 客户端(使用代理)
