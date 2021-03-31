@@ -218,6 +218,10 @@ impl UFuturesHttpClient {
     #[api(GET "fapi/v1/indexInfo")]
     pub async fn index_infos(&self) -> BianResult<Vec<response::IndexInfo>> {}
 
+    // **********************************************
+    //                  账户和交易接口
+    // **********************************************
+    
     /// 账户余额V2
     #[api(SGET "fapi/v2/balance")]
     pub async fn account_balance_v2(
@@ -225,10 +229,6 @@ impl UFuturesHttpClient {
         param: params::PTimestamp,
     ) -> BianResult<Vec<response::AccountBalance>> {
     }
-
-    // **********************************************
-    //                  账户和交易接口
-    // **********************************************
 
     /// 更改持仓模式
     ///
