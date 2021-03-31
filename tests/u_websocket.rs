@@ -4,12 +4,12 @@ use bian_rs::*;
 use std::{env, net::ToSocketAddrs};
 const BASE_URL: &str = "wss://fstream.binance.com";
 
-fn init_client() -> UFuturesProxyWSClient {
+fn init_client() -> UFuturesWSClient {
     dotenv::dotenv().unwrap();
     let proxy = env::var("WS_PROXY").expect("cant not find WS_PROXY env variable");
-    let proxy = proxy.to_socket_addrs().unwrap().next().unwrap();
+    let proxy = Some(proxy.to_socket_addrs().unwrap().next().unwrap());
     let base_url = url::Url::parse(BASE_URL).unwrap();
-    UFuturesProxyWSClient { proxy, base_url }
+    UFuturesWSClient { proxy, base_url }
 }
 
 #[test]

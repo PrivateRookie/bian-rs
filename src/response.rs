@@ -6,7 +6,7 @@ use serde::{
     de::{Unexpected, Visitor},
     Deserialize, Deserializer,
 };
-use tungstenite::client::ProxyAutoStream;
+use tungstenite::client::AutoGenericStream;
 
 struct F64Visitor;
 
@@ -450,9 +450,8 @@ pub struct BaseAsset {
 #[serde(rename_all = "camelCase")]
 pub struct PositionSide {
     /// "true": 双向持仓模式；"false": 单向持仓模式
-    pub dual_side_position: bool
+    pub dual_side_position: bool,
 }
-
 
 pub trait WebsocketResponse<R: serde::de::DeserializeOwned> {
     fn read_stream_single(&mut self) -> BianResult<R>;
@@ -828,7 +827,7 @@ pub struct WSDepth {
 }
 
 impl<R: serde::de::DeserializeOwned> WebsocketResponse<R>
-    for tungstenite::WebSocket<ProxyAutoStream>
+    for tungstenite::WebSocket<AutoGenericStream>
 {
     fn read_stream_single(&mut self) -> BianResult<R> {
         let msg = self

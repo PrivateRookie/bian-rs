@@ -6,10 +6,7 @@ use error::{APIError, BianResult};
 use hmac::{Hmac, Mac, NewMac};
 use response::WebsocketResponse;
 use sha2::Sha256;
-use tungstenite::{
-    client::{connect_with_proxy, ProxyAutoStream},
-    WebSocket,
-};
+use tungstenite::{WebSocket, client::{AutoGenericStream, connect_with_config}};
 
 pub mod enums;
 pub mod error;
@@ -241,17 +238,17 @@ impl UFuturesHttpClient {
 
 /// U 本位合约 websocket 客户端(使用代理)
 /// [doc](https://binance-docs.github.io/apidocs/futures/cn/#websocket)
-pub struct UFuturesProxyWSClient {
-    pub proxy: SocketAddr,
+pub struct UFuturesWSClient {
+    pub proxy: Option<SocketAddr>,
     pub base_url: url::Url,
 }
 
-impl UFuturesProxyWSClient {
+impl UFuturesWSClient {
     fn build_single(
         &self,
         symbol: String,
         channel: &str,
-    ) -> BianResult<WebSocket<ProxyAutoStream>> {
+    ) -> BianResult<WebSocket<AutoGenericStream>> {
         let url = if symbol.is_empty() {
             self.base_url.join(&format!("ws/{}", channel)).unwrap()
         } else {
@@ -259,7 +256,7 @@ impl UFuturesProxyWSClient {
                 .join(&format!("ws/{}@{}", symbol, channel))
                 .unwrap()
         };
-        let (socket, _) = connect_with_proxy(url, self.proxy, None, 3)
+        let (socket, _) = connect_with_config(url, None, 3, self.proxy)
             .map_err(|e| APIError::WSConnectError(e.to_string()))?;
         Ok(socket)
     }
@@ -268,7 +265,7 @@ impl UFuturesProxyWSClient {
         &self,
         symbols: Vec<String>,
         channel: &str,
-    ) -> BianResult<WebSocket<ProxyAutoStream>> {
+    ) -> BianResult<WebSocket<AutoGenericStream>> {
         let streams = symbols
             .iter()
             .map(|sym| format!("{}@{}", sym, channel))
@@ -278,7 +275,7 @@ impl UFuturesProxyWSClient {
             .base_url
             .join(&format!("stream/?streams={}", streams))
             .unwrap();
-        let (socket, _) = connect_with_proxy(url, self.proxy, None, 3)
+        let (socket, _) = connect_with_config(url, None, 3, self.proxy)
             .map_err(|e| APIError::WSConnectError(e.to_string()))?;
         Ok(socket)
     }
@@ -570,10 +567,4 @@ impl UFuturesProxyWSClient {
         };
         self.build_multi(symbols, &channel)
     }
-}
-
-/// U 本位合约 websocket 客户端
-/// [doc](https://binance-docs.github.io/apidocs/futures/cn/#websocket)
-pub struct UFuturesWSClient {
-    pub base_url: url::Url,
 }
