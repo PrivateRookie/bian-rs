@@ -4,6 +4,7 @@
         "Addrs",
         "BTCUP",
         "Hmac",
+        "Maint",
         "SDELETE",
         "SGET",
         "SPOST",

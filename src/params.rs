@@ -225,7 +225,7 @@ pub struct PSymbolOrder {
 #[serde(rename_all = "camelCase")]
 pub struct PBatchCancelOrder {
     pub symbol: String,
-    /// 系统订单号, 最多支持10个订单 比如[1234567,2345678]
+    /// 系统订单号, 最多支持10个订单 比如\[1234567,2345678\]
     pub order_id_list: Vec<usize>,
     /// 用户自定义的订单号, 最多支持10个订单 比如["my_id_1","my_id_2"] 需要encode双引号。逗号后面没有空格。
     pub orig_client_order_id_list: Vec<String>,
@@ -238,6 +238,26 @@ pub struct PBatchCancelOrder {
 pub struct PCountdownCancel {
     pub symbol: String,
     pub countdown_time: i64,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct POptionSymbolQuery {
+    pub symbol: Option<String>,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PHistOrder {
+    pub symbol: String,
+    pub order_id: Option<usize>,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+    limit: Option<usize>,
     #[serde(flatten)]
     pub ts: PTimestamp,
 }

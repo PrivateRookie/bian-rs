@@ -461,3 +461,134 @@ pub struct CountdownCancel {
     #[serde(deserialize_with = "string_as_usize")]
     pub countdown_time: usize,
 }
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AccountAsset {
+    ///资产
+    pub asset: String,
+    ///余额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub wallet_balance: f64,
+    /// 未实现盈亏
+    #[serde(deserialize_with = "string_as_f64")]
+    pub unrealized_profit: f64,
+    /// 保证金余额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub margin_balance: f64,
+    /// 维持保证金
+    #[serde(deserialize_with = "string_as_f64")]
+    pub maint_margin: f64,
+    /// 当前所需起始保证金
+    #[serde(deserialize_with = "string_as_f64")]
+    pub initial_margin: f64,
+    /// 持仓所需起始保证金(基于最新标记价格)
+    #[serde(deserialize_with = "string_as_f64")]
+    pub position_initial_margin: f64,
+    /// 当前挂单所需起始保证金(基于最新标记价格)
+    #[serde(deserialize_with = "string_as_f64")]
+    pub open_order_initial_margin: f64,
+    ///全仓账户余额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cross_wallet_balance: f64,
+    /// 全仓持仓未实现盈亏
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cross_un_pnl: f64,
+    /// 可用余额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub available_balance: f64,
+    /// 最大可转出余额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub max_withdraw_amount: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AccountPosition {
+    /// 交易对
+    pub symbol: String,
+    /// 当前所需起始保证金(基于最新标记价格)
+    #[serde(deserialize_with = "string_as_f64")]
+    pub initial_margin: f64,
+    ///维持保证金
+    #[serde(deserialize_with = "string_as_f64")]
+    pub maint_margin: f64,
+    /// 持仓未实现盈亏
+    #[serde(deserialize_with = "string_as_f64")]
+    pub unrealized_profit: f64,
+    /// 持仓所需起始保证金(基于最新标记价格)
+    #[serde(deserialize_with = "string_as_f64")]
+    pub position_initial_margin: f64,
+    /// 当前挂单所需起始保证金(基于最新标记价格)
+    #[serde(deserialize_with = "string_as_f64")]
+    pub open_order_initial_margin: f64,
+    /// 杠杆倍率
+    #[serde(deserialize_with = "string_as_f64")]
+    pub leverage: f64,
+    /// 是否是逐仓模式
+    pub isolated: bool,
+    /// 持仓成本价
+    #[serde(deserialize_with = "string_as_f64")]
+    pub entry_price: f64,
+    /// 当前杠杆下用户可用的最大名义价值
+    #[serde(deserialize_with = "string_as_f64")]
+    pub max_notional: f64,
+    /// 持仓方向
+    pub position_side: PositionSide,
+    /// 持仓数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub position_amt: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Account {
+    /// 手续费等级
+    pub fee_tier: i64,
+    /// 是否可以交易
+    pub can_trade: bool,
+    /// 是否可以入金
+    pub can_deposit: bool,
+    /// 是否可以出金
+    pub can_withdraw: bool,
+    pub update_time: i64,
+
+    /// 但前所需起始保证金总额(存在逐仓请忽略), 仅计算usdt资产
+    #[serde(deserialize_with = "string_as_f64")]
+    pub total_initial_margin: f64,
+    /// 维持保证金总额, 仅计算usdt资产
+    #[serde(deserialize_with = "string_as_f64")]
+    pub total_maint_margin: f64,
+    /// 账户总余额, 仅计算usdt资产
+    #[serde(deserialize_with = "string_as_f64")]
+    pub total_wallet_balance: f64,
+    /// 持仓未实现盈亏总额, 仅计算usdt资产
+    #[serde(deserialize_with = "string_as_f64")]
+    pub total_unrealized_profit: f64,
+    /// 保证金总余额, 仅计算usdt资产
+    #[serde(deserialize_with = "string_as_f64")]
+    pub total_margin_balance: f64,
+    /// 持仓所需起始保证金(基于最新标记价格), 仅计算usdt资产
+    #[serde(deserialize_with = "string_as_f64")]
+    pub total_position_initial_margin: f64,
+    /// 当前挂单所需起始保证金(基于最新标记价格), 仅计算usdt资产
+    #[serde(deserialize_with = "string_as_f64")]
+    pub total_open_order_initial_margin: f64,
+    /// 全仓账户余额, 仅计算usdt资产
+    #[serde(deserialize_with = "string_as_f64")]
+    pub total_cross_wallet_balance: f64,
+    /// 全仓持仓未实现盈亏总额, 仅计算usdt资产
+    #[serde(deserialize_with = "string_as_f64")]
+    pub total_cross_un_pnl: f64,
+    /// 可用余额, 仅计算usdt资产
+    #[serde(deserialize_with = "string_as_f64")]
+    pub available_balance: f64,
+    /// 最大可转出余额, 仅计算usdt资产    
+    #[serde(deserialize_with = "string_as_f64")]
+    pub max_withdraw_amount: f64,
+    /// 产品资产
+    pub assets: Vec<AccountAsset>,
+    /// 头寸，将返回所有市场symbol
+    /// 根据用户持仓模式展示持仓方向，即双向模式下只返回BOTH持仓情况，单向模式下只返回 LONG 和 SHORT 持仓情况
+    pub positions: Vec<AccountPosition>,
+}

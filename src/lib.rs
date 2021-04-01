@@ -222,14 +222,6 @@ impl UFuturesHttpClient {
     //                  账户和交易接口
     // **********************************************
 
-    /// 账户余额V2
-    #[api(SGET "fapi/v2/balance")]
-    pub async fn account_balance_v2(
-        &self,
-        param: params::PTimestamp,
-    ) -> BianResult<Vec<response::AccountBalance>> {
-    }
-
     /// 更改持仓模式
     ///
     /// 变换用户在 所有symbol 合约上的持仓模式：双向持仓或单向持仓。
@@ -291,12 +283,44 @@ impl UFuturesHttpClient {
     }
 
     /// 倒计时撤销所有订单
+    /// [DOC](https://binance-docs.github.io/apidocs/futures/cn/#trade-8)
     #[api(SPOST "fapi/v1/countdownCancelAll")]
     pub async fn countdown_cancel_all(
         &self,
         param: params::PCountdownCancel,
     ) -> BianResult<response::CountdownCancel> {
     }
+
+    /// 查询当前挂单
+    #[api(SGET "fapi/v1/openOrder")]
+    pub async fn open_order(&self, param: params::PQueryOrder) -> BianResult<response::Order> {}
+
+    /// 查询当前全部挂单
+    #[api(SGET "fapi/v1/openOrders")]
+    pub async fn open_orders(
+        &self,
+        param: params::POptionSymbolQuery,
+    ) -> BianResult<Vec<response::Order>> {
+    }
+
+    /// 查询所有订单(包括历史订单)
+    ///
+    /// - 查询时间范围最大不得超过7天
+    /// - 默认查询最近7天内的数据
+    #[api(SGET "fapi/v1/allOrders")]
+    pub async fn all_orders(&self, param: params::PHistOrder) -> BianResult<Vec<response::Order>> {}
+
+    /// 账户余额V2
+    #[api(SGET "fapi/v2/balance")]
+    pub async fn account_balance_v2(
+        &self,
+        param: params::PTimestamp,
+    ) -> BianResult<Vec<response::AccountBalance>> {
+    }
+
+    /// 账户信息v2
+    #[api(SGET "fapi/v2/account")]
+    pub async fn account_v2(&self, param: params::PTimestamp) -> BianResult<response::Account> {}
 }
 
 /// U 本位合约 websocket 客户端(使用代理)
