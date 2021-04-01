@@ -1,6 +1,6 @@
 use std::{collections::HashMap, usize};
 
-use crate::enums::{OrderSide, OrderStatus, OrderType, TimeInForce};
+use crate::enums::{OrderSide, OrderStatus, OrderType, PositionDirect, TimeInForce};
 
 use super::{string_as_f64, string_as_usize};
 use serde::Deserialize;
@@ -534,7 +534,7 @@ pub struct AccountPosition {
     #[serde(deserialize_with = "string_as_f64")]
     pub max_notional: f64,
     /// 持仓方向
-    pub position_side: PositionSide,
+    pub position_side: PositionDirect,
     /// 持仓数量
     #[serde(deserialize_with = "string_as_f64")]
     pub position_amt: f64,
