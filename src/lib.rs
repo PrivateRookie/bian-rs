@@ -289,6 +289,14 @@ impl UFuturesHttpClient {
         param: params::PBatchCancelOrder,
     ) -> BianResult<Vec<response::BatchOrderResponse>> {
     }
+
+    /// 倒计时撤销所有订单
+    #[api(SPOST "fapi/v1/countdownCancelAll")]
+    pub async fn countdown_cancel_all(
+        &self,
+        param: params::PCountdownCancel,
+    ) -> BianResult<response::CountdownCancel> {
+    }
 }
 
 /// U 本位合约 websocket 客户端(使用代理)

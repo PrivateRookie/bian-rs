@@ -453,3 +453,11 @@ pub enum BatchOrderResponse {
     Order(Order),
     Code(CodeResponse),
 }
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CountdownCancel {
+    pub symbol: String,
+    #[serde(deserialize_with = "string_as_usize")]
+    pub countdown_time: usize,
+}

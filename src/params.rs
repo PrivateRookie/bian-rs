@@ -232,3 +232,12 @@ pub struct PBatchCancelOrder {
     #[serde(flatten)]
     pub ts: PTimestamp,
 }
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PCountdownCancel {
+    pub symbol: String,
+    pub countdown_time: i64,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
