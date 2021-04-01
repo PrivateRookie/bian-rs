@@ -252,6 +252,43 @@ impl UFuturesHttpClient {
     /// [DOC](https://binance-docs.github.io/apidocs/futures/cn/#trade-2)
     #[api(SPOST "fapi/v1/order")]
     pub async fn order(&self, param: params::POrder) -> BianResult<response::Order> {}
+
+    /// 批量下单
+    /// [DOC](https://binance-docs.github.io/apidocs/futures/cn/#trade-4)
+    #[api(SPOST "fapi/v1/batchOrders")]
+    pub async fn batch_order(
+        &self,
+        param: params::PBatchOrder,
+    ) -> BianResult<Vec<response::BatchOrderResponse>> {
+    }
+
+    /// 查询订单
+    ///
+    /// 至少需要发送 orderId 与 origClientOrderId 中的一个
+    #[api(SGET "fapi/v1/order")]
+    pub async fn query_order(&self, param: params::PQueryOrder) -> BianResult<response::Order> {}
+
+    /// 撤销订单
+    ///
+    /// 至少需要发送 orderId 与 origClientOrderId 中的一个
+    #[api(SDELETE "fapi/v1/order")]
+    pub async fn cancel_order(&self, param: params::PQueryOrder) -> BianResult<response::Order> {}
+
+    /// 撤销全部订单
+    #[api(SDELETE "fapi/v1/allOpenOrders")]
+    pub async fn cancel_all_orders(
+        &self,
+        param: params::PSymbolOrder,
+    ) -> BianResult<response::CodeResponse> {
+    }
+
+    /// 批量撤销订单
+    #[api(SDELETE "fapi/v1/batchOrders")]
+    pub async fn batch_cancel_orders(
+        &self,
+        param: params::PBatchCancelOrder,
+    ) -> BianResult<Vec<response::BatchOrderResponse>> {
+    }
 }
 
 /// U 本位合约 websocket 客户端(使用代理)

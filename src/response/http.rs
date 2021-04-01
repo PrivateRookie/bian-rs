@@ -446,3 +446,10 @@ pub struct Order {
     pub working_type: String,
     pub price_protect: bool,
 }
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum BatchOrderResponse {
+    Order(Order),
+    Code(CodeResponse),
+}

@@ -126,6 +126,16 @@ pub struct PTimestamp {
     pub timestamp: i64,
 }
 
+impl PTimestamp {
+    pub fn now() -> Self {
+        let now = chrono::Utc::now();
+        PTimestamp {
+            timestamp: now.timestamp_millis(),
+            recv_window: None,
+        }
+    }
+}
+
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PPositionSideDual {
@@ -137,7 +147,7 @@ pub struct PPositionSideDual {
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct POrder {
+pub struct POrderSpec {
     /// 交易对
     pub symbol: String,
     /// 买卖方向 `SELL`, `BUY`
@@ -174,6 +184,51 @@ pub struct POrder {
     // TODO make it enum
     /// "ACK", "RESULT", 默认 "ACK"
     pub new_order_resp_type: Option<String>,
+}
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct POrder {
+    #[serde(flatten)]
+    pub spec: POrderSpec,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PBatchOrder {
+    /// 订单列表，最多支持5个订单
+    pub batch_orders: Vec<POrderSpec>,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PQueryOrder {
+    pub symbol: String,
+    pub order_id: Option<usize>,
+    pub orig_client_order_id: Option<String>,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PSymbolOrder {
+    pub symbol: String,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PBatchCancelOrder {
+    pub symbol: String,
+    /// 系统订单号, 最多支持10个订单 比如[1234567,2345678]
+    pub order_id_list: Vec<usize>,
+    /// 用户自定义的订单号, 最多支持10个订单 比如["my_id_1","my_id_2"] 需要encode双引号。逗号后面没有空格。
+    pub orig_client_order_id_list: Vec<String>,
     #[serde(flatten)]
     pub ts: PTimestamp,
 }
