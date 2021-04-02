@@ -38,7 +38,10 @@ impl UFuturesHttpClient {
         let signature = hex::encode(signed_key.finalize().into_bytes());
         signature
     }
+}
 
+/// 行情接口
+impl UFuturesHttpClient {
     /// 测试服务器连通性
     #[api(GET "fapi/v1/ping")]
     pub async fn ping(&self) -> BianResult<response::Ping> {}
@@ -212,11 +215,10 @@ impl UFuturesHttpClient {
     /// 综合指数交易对信息
     #[api(GET "fapi/v1/indexInfo")]
     pub async fn index_infos(&self) -> BianResult<Vec<response::IndexInfo>> {}
+}
 
-    // **********************************************
-    //                  账户和交易接口
-    // **********************************************
-
+/// 账户和交易接口
+impl UFuturesHttpClient {
     /// 更改持仓模式
     ///
     /// 变换用户在 所有symbol 合约上的持仓模式：双向持仓或单向持仓。
@@ -363,6 +365,14 @@ impl UFuturesHttpClient {
     ) -> BianResult<Vec<response::UserTrade>> {
     }
 }
+
+/// websocket 相关接口
+// impl UFuturesHttpClient {
+//     /// 生成 listenKey
+//     #[api(SPOST "fapi/v1/listenKey")]
+//     pub async fn create_listen_key(&self) -> BianResult<()> {}
+// }
+
 
 /// U 本位合约 websocket 客户端(使用代理)
 /// [doc](https://binance-docs.github.io/apidocs/futures/cn/#websocket)
