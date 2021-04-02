@@ -1,5 +1,6 @@
-use bian_rs::enums::*;
-use bian_rs::*;
+use bian_rs::client::usd_futures::*;
+use bian_rs::enums::{self, *};
+use bian_rs::params;
 
 use std::env;
 const BASE_URL: &str = "https://fapi.binance.com/";
