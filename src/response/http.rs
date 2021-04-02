@@ -592,3 +592,37 @@ pub struct Account {
     /// 根据用户持仓模式展示持仓方向，即双向模式下只返回BOTH持仓情况，单向模式下只返回 LONG 和 SHORT 持仓情况
     pub positions: Vec<AccountPosition>,
 }
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Leverage {
+    pub symbol: String,
+    pub leverage: usize,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub max_notional_value: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PositionMargin {
+    pub amount: f64,
+    pub code: usize,
+    pub msg: String,
+    /// 调整方向 1: 增加逐仓保证金，2: 减少逐仓保证金
+    #[serde(rename = "type")]
+    pub margin_type: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PositionMarginHist {
+    #[serde(deserialize_with = "string_as_f64")]
+    pub amount: f64,
+    pub asset: String,
+    pub symbol: String,
+    pub time: i64,
+    /// 调整方向 1: 增加逐仓保证金，2: 减少逐仓保证金
+    #[serde(rename = "type")]
+    pub margin_type: usize,
+    pub position_side: PositionSide,
+}

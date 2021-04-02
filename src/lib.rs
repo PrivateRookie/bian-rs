@@ -321,6 +321,34 @@ impl UFuturesHttpClient {
     /// 账户信息v2
     #[api(SGET "fapi/v2/account")]
     pub async fn account_v2(&self, param: params::PTimestamp) -> BianResult<response::Account> {}
+
+    /// 调整开仓杠杆
+    #[api(SPOST "fapi/v1/leverage")]
+    pub async fn leverage(&self, param: params::PLeverage) -> BianResult<response::Leverage> {}
+
+    /// 变换逐全仓模式
+    #[api(SPOST "fapi/v1/marginType")]
+    pub async fn margin_type(
+        &self,
+        param: params::PMarginType,
+    ) -> BianResult<response::CodeResponse> {
+    }
+
+    /// 调整逐仓保证金
+    #[api(SPOST "fapi/v1/positionMargin")]
+    pub async fn position_margin(
+        &self,
+        param: params::PPositionMargin,
+    ) -> BianResult<response::PositionMargin> {
+    }
+
+    /// 逐仓保证金变动历史
+    #[api(SGET "fapi/v1/positionMargin/history")]
+    pub async fn position_margin_history(
+        &self,
+        param: params::PPositionMarginHist,
+    ) -> BianResult<Vec<response::PositionMarginHist>> {
+    }
 }
 
 /// U 本位合约 websocket 客户端(使用代理)

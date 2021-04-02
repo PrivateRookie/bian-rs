@@ -1,6 +1,6 @@
 use std::usize;
 
-use crate::enums::{Interval, OrderSide, OrderType, PositionDirect, TimeInForce};
+use crate::enums::{Interval, MarginType, OrderSide, OrderType, PositionDirect, TimeInForce};
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -258,6 +258,55 @@ pub struct PHistOrder {
     pub start_time: Option<i64>,
     pub end_time: Option<i64>,
     limit: Option<usize>,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PLeverage {
+    pub symbol: String,
+    /// 目标杠杆倍数：1 到 125 整数
+    pub leverage: usize,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PMarginType {
+    pub symbol: String,
+    pub margin_type: MarginType,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PPositionMargin {
+    pub symbol: String,
+    /// 持仓方向，单向持仓模式下非必填，默认且仅可填BOTH;在双向持仓模式下必填,且仅可选择 LONG 或 SHORT
+    pub position_side: Option<PositionDirect>,
+    pub amount: f64,
+    /// 调整方向 1: 增加逐仓保证金，2: 减少逐仓保证金
+    #[serde(rename = "type")]
+    pub margin_type: usize,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PPositionMarginHist {
+    pub symbol: String,
+    /// 持仓方向，单向持仓模式下非必填，默认且仅可填BOTH;在双向持仓模式下必填,且仅可选择 LONG 或 SHORT
+    pub position_side: Option<PositionDirect>,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+    /// 返回的结果集数量 默认值: 500
+    pub limit: Option<usize>,
+    #[serde(rename = "type")]
+    pub margin_type: usize,
     #[serde(flatten)]
     pub ts: PTimestamp,
 }

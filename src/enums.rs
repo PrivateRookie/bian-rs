@@ -110,6 +110,13 @@ pub enum WorkingType {
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum MarginType {
+    Isolated,
+    Crossed,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum NewOrderType {
     Ack,
     Result,
