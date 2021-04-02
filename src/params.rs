@@ -215,7 +215,7 @@ pub struct PQueryOrder {
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PSymbolOrder {
+pub struct PSymbolWithTs {
     pub symbol: String,
     #[serde(flatten)]
     pub ts: PTimestamp,
@@ -307,6 +307,20 @@ pub struct PPositionMarginHist {
     pub limit: Option<usize>,
     #[serde(rename = "type")]
     pub margin_type: usize,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PUserTrade {
+    pub symbol: String,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+    /// 返回该fromId及之后的成交，缺省返回最近的成交
+    pub from_id: Option<usize>,
+    /// 返回的结果集数量 默认值:500 最大值:1000.
+    pub limit: Option<usize>,
     #[serde(flatten)]
     pub ts: PTimestamp,
 }

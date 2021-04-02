@@ -270,7 +270,7 @@ impl UFuturesHttpClient {
     #[api(SDELETE "fapi/v1/allOpenOrders")]
     pub async fn cancel_all_orders(
         &self,
-        param: params::PSymbolOrder,
+        param: params::PSymbolWithTs,
     ) -> BianResult<response::CodeResponse> {
     }
 
@@ -348,6 +348,24 @@ impl UFuturesHttpClient {
         &self,
         param: params::PPositionMarginHist,
     ) -> BianResult<Vec<response::PositionMarginHist>> {
+    }
+
+    /// 用户持仓风险
+    ///
+    /// 请与账户推送信息ACCOUNT_UPDATE配合使用，以满足您的及时性和准确性需求。
+    #[api(SGET "fapi/v2/positionRisk")]
+    pub async fn position_risk(
+        &self,
+        param: params::PSymbolWithTs,
+    ) -> BianResult<Vec<response::PositionRisk>> {
+    }
+
+    /// 账户成交历史
+    #[api(SGET "fapi/v1/userTrades")]
+    pub async fn user_trades(
+        &self,
+        param: params::PUserTrade,
+    ) -> BianResult<Vec<response::UserTrade>> {
     }
 }
 

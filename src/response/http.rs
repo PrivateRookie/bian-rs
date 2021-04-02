@@ -1,6 +1,6 @@
 use std::{collections::HashMap, usize};
 
-use crate::enums::{OrderSide, OrderStatus, OrderType, PositionDirect, TimeInForce};
+use crate::enums::{MarginType, OrderSide, OrderStatus, OrderType, PositionDirect, TimeInForce};
 
 use super::{string_as_f64, string_as_usize};
 use serde::Deserialize;
@@ -625,4 +625,79 @@ pub struct PositionMarginHist {
     #[serde(rename = "type")]
     pub margin_type: usize,
     pub position_side: PositionSide,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PositionRisk {
+    // 开仓均价
+    #[serde(deserialize_with = "string_as_f64")]
+    pub entry_price: f64,
+    // 逐仓模式或全仓模式
+    pub margin_type: MarginType,
+
+    pub is_auto_add_margin: bool,
+    // 逐仓保证金
+    #[serde(deserialize_with = "string_as_f64")]
+    pub isolated_margin: f64,
+    // 当前杠杆倍数
+    #[serde(deserialize_with = "string_as_usize")]
+    pub leverage: usize,
+    // 参考强平价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub liquidation_price: f64,
+    // 当前标记价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub mark_price: f64,
+    // 当前杠杆倍数允许的名义价值上限
+    #[serde(deserialize_with = "string_as_f64")]
+    pub max_notional_value: f64,
+    // 头寸数量，符号代表多空方向, 正数为多，负数为空
+    #[serde(deserialize_with = "string_as_f64")]
+    pub position_amt: f64,
+    // 交易对
+    pub symbol: String,
+    // 持仓未实现盈亏
+    #[serde(deserialize_with = "string_as_f64")]
+    pub un_realized_profit: f64,
+    // 持仓方向
+    pub position_side: PositionSide,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UserTrade {
+    /// 是否是买方
+    buyer: bool,
+    /// 手续费
+    #[serde(deserialize_with = "string_as_f64")]
+    commission: f64,
+    /// 手续费计价单位
+    commission_asset: String,
+    /// 交易ID
+    id: usize,
+    /// 是否是挂单方
+    maker: bool,
+    /// 订单编号
+    order_id: usize,
+    /// 成交价
+    #[serde(deserialize_with = "string_as_f64")]
+    price: f64,
+    /// 成交量
+    #[serde(deserialize_with = "string_as_f64")]
+    qty: f64,
+    /// 成交额
+    #[serde(deserialize_with = "string_as_f64")]
+    quote_qty: f64,
+    /// 实现盈亏
+    #[serde(deserialize_with = "string_as_f64")]
+    realized_pnl: f64,
+    /// 买卖方向
+    side: OrderSide,
+    /// 持仓方向
+    position_side: PositionSide,
+    /// 交易对
+    symbol: String,
+    /// 时间
+    time: i64,
 }
