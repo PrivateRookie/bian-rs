@@ -1,7 +1,10 @@
 use std::usize;
 
-use super::string_as_f64;
-use crate::enums::{ContractType, Interval, OrderSide, OrderStatus, OrderType, TimeInForce};
+use super::{string_as_f64, string_as_usize};
+use crate::enums::{
+    ContractType, Interval, MarginType, OrderSide, OrderStatus, OrderType, PositionDirect,
+    TimeInForce,
+};
 use crate::error::{APIError, BianResult};
 use serde::Deserialize;
 use tungstenite::client::AutoGenericStream;
@@ -377,6 +380,270 @@ pub struct WSDepth {
     /// 卖方
     #[serde(rename = "a")]
     pub sell: Vec<(String, String)>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSListenKeyExpired {
+    /// 事件类型
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件推送时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSMarginPosition {
+    /// symbol
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// 持仓方向
+    #[serde(rename = "ps")]
+    pub position_side: PositionDirect,
+    /// 仓位
+    #[serde(deserialize_with = "string_as_f64")]
+    pub pa: f64,
+    /// 保证金模式
+    #[serde(rename = "mt")]
+    pub margin_type: MarginType,
+    /// 若为逐仓，仓位保证金
+    #[serde(deserialize_with = "string_as_f64")]
+    pub iw: f64,
+    /// 标记价格
+    #[serde(rename = "mp", deserialize_with = "string_as_f64")]
+    pub mark_price: f64,
+    /// 未实现盈亏
+    #[serde(rename = "up", deserialize_with = "string_as_f64")]
+    pub unrealized_pnl: f64,
+    /// 持仓需要的维持保证金
+    #[serde(rename = "mm", deserialize_with = "string_as_f64")]
+    pub maint_margin: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSMarginCall {
+    /// 事件类型
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件推送时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 除去逐仓仓位保证金的钱包余额, 仅在全仓 margin call 情况下推送此字段
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cw: f64,
+    /// 仓位数据
+    #[serde(rename = "p")]
+    pub position: Vec<WSMarginPosition>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSAccountEvent {
+    // TODO make it enum
+    /// 事件推出原因
+    #[serde(rename = "m")]
+    pub update_type: String,
+    #[serde(rename = "B")]
+    pub balances: Vec<WSBalance>,
+    #[serde(rename = "P")]
+    pub positions: Vec<WSPosition>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSBalance {
+    /// 资产名称
+    #[serde(rename = "a")]
+    pub asset: String,
+    /// 钱包余额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub wb: f64,
+    /// 除去逐仓仓位保证金的钱包余额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cw: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSPosition {
+    /// 交易对
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// 仓位
+    #[serde(rename = "pa", deserialize_with = "string_as_f64")]
+    pub position: f64,
+    /// 入仓价格
+    #[serde(rename = "ep", deserialize_with = "string_as_f64")]
+    pub enter_price: f64,
+    /// (费前)累计实现损益
+    #[serde(rename = "cr", deserialize_with = "string_as_f64")]
+    pub cumulative_realized: f64,
+    /// 未实现盈亏
+    #[serde(rename = "up", deserialize_with = "string_as_f64")]
+    pub unrealized_pnl: f64,
+    /// 保证金模式
+    #[serde(rename = "mt")]
+    pub margin_type: MarginType,
+    /// 若为逐仓，仓位保证金
+    #[serde(deserialize_with = "string_as_f64")]
+    pub iw: f64,
+    /// 持仓方向
+    #[serde(rename = "ps")]
+    pub position_side: PositionDirect,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSAccountUpdate {
+    /// 事件类型
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件推送时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 撮合时间
+    #[serde(rename = "T")]
+    pub trade_matching_time: i64,
+    /// 账户更新事件
+    #[serde(rename = "a")]
+    pub event: WSAccountEvent,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSOrderUpdate {
+    /// 事件类型
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件推送时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 撮合时间
+    #[serde(rename = "T")]
+    pub trade_matching_time: i64,
+    /// 账户更新事件
+    #[serde(rename = "a")]
+    pub event: WSOrderEvent,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSOrderEvent {
+    /// 交易对
+    pub s: String,
+    /// 客户端自定订单ID
+    ///
+    /// 特殊的自定义订单ID:
+    /// - "autoclose-"开头的字符串: 系统强平订单
+    /// - "adl_autoclose": ADL自动减仓订单
+    pub c: String,
+    /// 订单方向
+    pub S: OrderSide,
+    /// 订单类型
+    pub o: OrderType,
+    /// 有效方式
+    pub f: TimeInForce,
+    /// 订单原始数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub q: f64,
+    /// 订单原始价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub p: f64,
+    /// 订单平均价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub ap: f64,
+    /// 条件订单触发价格，对追踪止损单无效
+    #[serde(deserialize_with = "string_as_f64")]
+    pub sp: f64,
+    /// 本次事件的具体执行类型
+    pub x: String,
+    /// 订单的当前状态
+    pub X: OrderStatus,
+    /// 订单ID
+    pub i: usize,
+    /// 订单末次成交量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub l: f64,
+    /// 订单累计已成交量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub z: f64,
+    /// 订单末次成交价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub L: f64,
+    /// 手续费资产类型
+    pub N: String,
+    /// 手续费数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub n: f64,
+    /// 成交时间
+    pub T: i64,
+    /// 成交ID
+    pub t: usize,
+    /// 买单净值
+    #[serde(deserialize_with = "string_as_f64")]
+    pub b: f64,
+    /// 卖单净值
+    #[serde(deserialize_with = "string_as_f64")]
+    pub a: f64,
+    /// 该成交是作为挂单成交吗？
+    pub m: bool,
+    /// 是否是只减仓单
+    pub R: bool,
+    /// 触发价类型
+    pub wt: String,
+    /// 原始订单类型
+    pub ot: OrderType,
+    /// 持仓方向
+    pub ps: PositionDirect,
+    /// 是否为触发平仓单; 仅在条件订单情况下会推送此字段
+    pub cp: bool,
+    /// 追踪止损激活价格, 仅在追踪止损单时会推送此字段
+    #[serde(deserialize_with = "string_as_f64")]
+    pub AP: f64,
+    /// 追踪止损回调比例, 仅在追踪止损单时会推送此字段
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cr: f64,
+    /// 该交易实现盈亏
+    #[serde(deserialize_with = "string_as_f64")]
+    pub rp: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSLeverageUpdate {
+    /// 事件类型
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件推送时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 撮合时间
+    #[serde(rename = "T")]
+    pub trade_matching_time: i64,
+    #[serde(rename = "ac")]
+    pub event: WSLeverageEvent,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSLeverageEvent {
+    #[serde(rename = "s")]
+    pub symbol: String,
+    #[serde(rename = "l", deserialize_with = "string_as_usize")]
+    pub leverage: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum WSUserStream {
+    ListenKeyExpired(WSListenKeyExpired),
+    MarginPosition(WSMarginPosition),
+    AccountUpdate(WSAccountUpdate),
+    OrderUpdate(WSOrderUpdate),
+    LeverageUpdate(WSLeverageUpdate),
 }
 
 impl<R: serde::de::DeserializeOwned> WebsocketResponse<R>

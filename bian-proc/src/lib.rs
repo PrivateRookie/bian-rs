@@ -45,17 +45,27 @@ pub fn api(attr: TokenStream, item: TokenStream) -> TokenStream {
         }
     };
     let sign_block = if should_sign {
-        quote::quote! {
-            let qs  = format!(
-                "{}&signature={}",
-                qs,
-                self.sign(&param),
-            );
+        if let Some(p_ident) = param_ident {
+            quote::quote! {
+                let qs  = format!(
+                    "{}&signature={}",
+                    qs,
+                    self.sign(&#p_ident),
+                );
+            }
+        } else {
+            quote::quote! {
+                let p: HashMap<String, String> = HashMap::new();
+                let qs = format!(
+                    "{}&signature={}", qs, self.sign(&p)
+                );
+            }
         }
     } else {
         quote::quote! {}
     };
     let fn_block = syn::parse_quote! {
+        use std::collections::HashMap;
 
         let url = self.base_url.join(#url).unwrap();
 

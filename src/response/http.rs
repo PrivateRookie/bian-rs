@@ -7,7 +7,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Ping(HashMap<String, String>);
+pub struct EmptyResponse(HashMap<String, String>);
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -700,4 +700,10 @@ pub struct UserTrade {
     symbol: String,
     /// 时间
     time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ListenKey {
+    pub listen_key: String,
 }

@@ -44,7 +44,7 @@ impl UFuturesHttpClient {
 impl UFuturesHttpClient {
     /// 测试服务器连通性
     #[api(GET "fapi/v1/ping")]
-    pub async fn ping(&self) -> BianResult<response::Ping> {}
+    pub async fn ping(&self) -> BianResult<response::EmptyResponse> {}
 
     /// 获取服务器时间
     #[api(GET "fapi/v1/time")]
@@ -367,12 +367,22 @@ impl UFuturesHttpClient {
 }
 
 /// websocket 相关接口
-// impl UFuturesHttpClient {
-//     /// 生成 listenKey
-//     #[api(SPOST "fapi/v1/listenKey")]
-//     pub async fn create_listen_key(&self) -> BianResult<()> {}
-// }
+impl UFuturesHttpClient {
+    /// 生成 listenKey
+    ///
+    /// 创建一个新的user data stream，返回值为一个listenKey，即websocket订阅的stream名称。
+    /// 如果该帐户具有有效的listenKey，则将返回该listenKey并将其有效期延长60分钟。
+    #[api(SPOST "fapi/v1/listenKey")]
+    pub async fn create_listen_key(&self) -> BianResult<response::ListenKey> {}
 
+    /// 更新 listenKey
+    #[api(SPUT "fapi/v1/listenKey")]
+    pub async fn update_listen_key(&self) -> BianResult<response::EmptyResponse> {}
+
+    /// 关闭 listenKey
+    #[api(SDELETE "fapi/v1/listenKey")]
+    pub async fn close_listen_key(&self) -> BianResult<response::EmptyResponse> {}
+}
 
 /// U 本位合约 websocket 客户端(使用代理)
 /// [doc](https://binance-docs.github.io/apidocs/futures/cn/#websocket)
@@ -417,7 +427,10 @@ impl UFuturesWSClient {
             .map_err(|e| APIError::WSConnectError(e.to_string()))?;
         Ok(socket)
     }
+}
 
+/// 行情
+impl UFuturesWSClient {
     /// 同一价格、同一方向、同一时间(100ms计算)的trade会被聚合为一条
     pub fn agg_trade(
         &self,
@@ -704,5 +717,18 @@ impl UFuturesWSClient {
             _ => format!("depth{}", level),
         };
         self.build_multi(symbols, &channel)
+    }
+}
+
+/// 用户 data stream
+impl UFuturesWSClient {
+    pub fn user_data(
+        &self,
+        listen_key: &str,
+    ) -> BianResult<impl WebsocketResponse<response::WSUserStream>> {
+        let url = self.base_url.join(listen_key).unwrap();
+        let (socket, _) = connect_with_config(url, None, 3, self.proxy)
+            .map_err(|e| APIError::WSConnectError(e.to_string()))?;
+        Ok(socket)
     }
 }

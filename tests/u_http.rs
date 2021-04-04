@@ -21,7 +21,6 @@ async fn test_ping() {
 #[tokio::test]
 async fn test_balance() {
     let client = init_client();
-    let now = chrono::Utc::now();
     let params = params::PTimestamp::now();
     client.account_balance_v2(params).await.unwrap();
 }
@@ -366,4 +365,13 @@ async fn test_order_test() {
     };
     let resp = client.order(param).await.unwrap();
     dbg!(resp);
+}
+
+#[tokio::test]
+async fn test_listen_key() {
+    let client = init_client();
+    let key = client.create_listen_key().await.unwrap();
+    dbg!(&key);
+    client.update_listen_key().await.unwrap();
+    client.close_listen_key().await.unwrap();
 }

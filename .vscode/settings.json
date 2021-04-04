@@ -9,6 +9,7 @@
         "SGET",
         "SPOST",
         "SPUT",
+        "autoclose",
         "avrage",
         "bian",
         "chrono",
