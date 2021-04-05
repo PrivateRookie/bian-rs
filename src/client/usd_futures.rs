@@ -52,7 +52,7 @@ impl UFuturesHttpClient {
 
     /// 获取交易规则和交易对
     #[api(GET "fapi/v1/exchangeInfo")]
-    pub async fn exchange_info(&self) -> BianResult<response::ExchangeInfo> {}
+    pub async fn exchange_info(&self) -> BianResult<response::FuturesExchangeInfo> {}
 
     /// 深度信息
     #[api(GET "fapi/v1/depth")]

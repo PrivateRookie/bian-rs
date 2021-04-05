@@ -47,7 +47,7 @@ pub struct RateLimit {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase", tag = "filterType")]
-pub enum SymbolFilter {
+pub enum FuturesSymbolFilter {
     #[serde(rename = "PRICE_FILTER")]
     PriceFilter {
         #[serde(deserialize_with = "string_as_f64", rename = "minPrice")]
@@ -96,6 +96,88 @@ pub enum SymbolFilter {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", tag = "filterType")]
+pub enum SpotSymbolFilter {
+    #[serde(rename = "PRICE_FILTER")]
+    PriceFilter {
+        #[serde(deserialize_with = "string_as_f64", rename = "minPrice")]
+        min_price: f64,
+        #[serde(deserialize_with = "string_as_f64", rename = "maxPrice")]
+        max_price: f64,
+        #[serde(deserialize_with = "string_as_f64", rename = "tickSize")]
+        tick_size: f64,
+    },
+    #[serde(rename = "PERCENT_PRICE")]
+    PercentPrice {
+        #[serde(deserialize_with = "string_as_f64", rename = "multiplierDown")]
+        multiplier_down: f64,
+        #[serde(deserialize_with = "string_as_f64", rename = "multiplierUp")]
+        multiplier_up: f64,
+        #[serde(rename = "avgPriceMins")]
+        avg_price_mins: usize,
+    },
+    #[serde(rename = "LOT_SIZE")]
+    LOTSize {
+        #[serde(deserialize_with = "string_as_f64", rename = "stepSize")]
+        step_size: f64,
+        #[serde(deserialize_with = "string_as_f64", rename = "maxQty")]
+        max_qty: f64,
+        #[serde(deserialize_with = "string_as_f64", rename = "minQty")]
+        min_qty: f64,
+    },
+    #[serde(rename = "MIN_NOTIONAL")]
+    MinNotional {
+        #[serde(deserialize_with = "string_as_f64", rename = "minNotional")]
+        min_notional: f64,
+        #[serde(rename = "applyToMarket")]
+        apply_to_market: bool,
+        #[serde(rename = "avgPriceMins")]
+        avg_price_mins: usize,
+    },
+    #[serde(rename = "ICEBERG_PARTS")]
+    IcebergParts { limit: usize },
+    #[serde(rename = "MARKET_LOT_SIZE")]
+    MarketLOTSize {
+        #[serde(deserialize_with = "string_as_f64", rename = "stepSize")]
+        step_size: f64,
+        #[serde(deserialize_with = "string_as_f64", rename = "maxQty")]
+        max_qty: f64,
+        #[serde(deserialize_with = "string_as_f64", rename = "minQty")]
+        min_qty: f64,
+    },
+    #[serde(rename = "MAX_NUM_ORDERS")]
+    MaxNumOrders {
+        #[serde(rename = "maxNumOrders")]
+        max_number_orders: usize,
+    },
+    #[serde(rename = "MAX_NUM_ALGO_ORDERS")]
+    MaxNumAlgoOrders {
+        #[serde(rename = "maxNumAlgoOrders")]
+        max_num_algo_orders: usize,
+    },
+    #[serde(rename = "MAX_NUM_ICEBERG_ORDERS")]
+    MaxNumIcebergOrders {
+        #[serde(rename = "maxNumIcebergOrders")]
+        max_num_iceberg_orders: usize,
+    },
+    #[serde(rename = "MAX_POSITION")]
+    MaxPosition {
+        #[serde(deserialize_with = "string_as_f64")]
+        max_position: f64,
+    },
+    #[serde(rename = "EXCHANGE_MAX_NUM_ORDERS")]
+    ExchangeMaxNumOrders {
+        #[serde(rename = "maxNumOrders")]
+        max_num_orders: usize,
+    },
+    #[serde(rename = "EXCHANGE_MAX_ALGO_ORDERS")]
+    ExchangeMaxAlgoOrders {
+        #[serde(rename = "maxNumAlgoOrders")]
+        max_num_algo_orders: usize,
+    },
+}
+
+#[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CodeResponse {
     pub code: usize,
@@ -104,7 +186,7 @@ pub struct CodeResponse {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Symbol {
+pub struct FuturesSymbol {
     /// 交易对
     pub symbol: String,
     /// 标的交易对
@@ -143,20 +225,51 @@ pub struct Symbol {
     #[serde(deserialize_with = "string_as_f64")]
     /// 开启"priceProtect"的条件订单的触发阈值
     pub trigger_protect: f64,
-    pub filters: Vec<SymbolFilter>,
+    pub filters: Vec<FuturesSymbolFilter>,
     pub order_types: Vec<OrderType>,
     pub time_in_force: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ExchangeInfo {
+pub struct SpotSymbol {
+    /// 交易对
+    pub symbol: String,
+    /// 交易对状态
+    pub status: String,
+    /// 标的资产
+    pub base_asset: String,
+    /// 标的资产精度
+    pub base_asset_precision: usize,
+    pub quote_asset: String,
+    pub quote_asset_precision: usize,
+    pub order_types: Vec<String>,
+    pub iceberg_allowed: bool,
+    pub oco_allowed: bool,
+    pub is_spot_trading_allowed: bool,
+    pub is_margin_trading_allowed: bool,
+    pub filters: Vec<SpotSymbolFilter>,
+    pub permissions: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FuturesExchangeInfo {
     pub exchange_filters: Vec<String>,
     pub rate_limits: Vec<RateLimit>,
     pub futures_type: String,
     pub server_time: i64,
-    pub symbols: Vec<Symbol>,
+    pub symbols: Vec<FuturesSymbol>,
     pub timezone: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SpotExchangeInfo {
+    pub exchange_filters: Vec<String>,
+    pub rate_limits: Vec<RateLimit>,
+    pub server_time: i64,
+    pub symbols: Vec<SpotSymbol>,
 }
 
 #[derive(Debug, Deserialize)]
