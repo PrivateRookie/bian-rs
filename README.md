@@ -2,6 +2,13 @@
 
 币安API Rust async SDK
 
+## 完成情况
+
+| 接口      | 现货    | U本位合约 | 币本位合约 | 欧式期权 |
+| --------- | ------- | --------- | ---------- | -------- |
+| http      | 🚧开发中 | 🆗         | 未开始     | 未开始   |
+| websocket | 🚧开发中 | 🆗         | 未开始     | 未开始   |
+
 ## 使用
 
 在 `Cargo.toml` 中添加依赖
@@ -14,6 +21,8 @@ bian-rs = { git = "https://github.com/PrivateRookie/bian-rs.git" }
 
 在国内使用需要设置代理，bian-rs 通过 `HTTP_PROXY` 和 `HTTPS_PROXY` 环境变量自动
 设置代理。
+
+### http 接口
 
 ```rust
 use bian_rs::UFuturesHttpClient;
@@ -28,6 +37,30 @@ async fn main() {
     let client UFuturesHttpClient::new(api_key, secret_key, base_url);
     // 测试是否连通
     client.ping().await.unwrap();
+}
+```
+
+### websocket 接口
+
+
+```rust
+fn init_client() -> UFuturesWSClient {
+    dotenv::dotenv().unwrap();
+    let proxy = env::var("WS_PROXY").expect("cant not find WS_PROXY env variable");
+    let proxy = Some(proxy.to_socket_addrs().unwrap().next().unwrap());
+    let base_url = url::Url::parse(BASE_URL).unwrap();
+    UFuturesWSClient { proxy, base_url }
+}
+
+#[test]
+fn test_ws_kline() {
+    let client = init_client();
+    let mut stream = client
+        .kline("btcusdt".to_string(), enums::Interval::Min1)
+        .unwrap();
+    for _ in 0..5 {
+        dbg!(stream.read_stream_single().unwrap());
+    }
 }
 ```
 
