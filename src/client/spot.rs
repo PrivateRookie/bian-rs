@@ -1,5 +1,5 @@
 use crate::error::{APIError, BianResult};
-use crate::response;
+use crate::{params, response};
 use bian_proc::api;
 use hmac::{Hmac, Mac, NewMac};
 use sha2::Sha256;
@@ -34,14 +34,73 @@ impl SpotHttpClient {
 /// 行情接口
 impl SpotHttpClient {
     /// 测试服务器连通性
-    #[api(GET "api/v1/ping")]
+    #[api(GET "api/v3/ping")]
     pub async fn ping(&self) -> BianResult<response::EmptyResponse> {}
 
     /// 获取服务器时间
-    #[api(GET "api/v1/time")]
+    #[api(GET "api/v3/time")]
     pub async fn server_time(&self) -> BianResult<response::ServerTime> {}
 
     /// 获取交易规则和交易对
-    #[api(GET "api/v1/exchangeInfo")]
+    #[api(GET "api/v3/exchangeInfo")]
     pub async fn exchange_info(&self) -> BianResult<response::SpotExchangeInfo> {}
+
+    #[api(GET "api/v3/depth")]
+    pub async fn depth(&self, param: params::PDepth) -> BianResult<response::SpotDepth> {}
+
+    /// 近期成交
+    #[api(GET "api/v3/trades")]
+    pub async fn trades(&self, param: params::PTrade) -> BianResult<Vec<response::SpotTrade>> {}
+
+    /// 查询历史成交
+    #[api(GET "api/v3/historicalTrades")]
+    pub async fn historical_trades(
+        &self,
+        param: params::PHistoricalTrade,
+    ) -> BianResult<Vec<response::SpotHistoricalTrade>> {
+    }
+
+    /// 近期成交(归集)
+    #[api(GET "api/v3/aggTrades")]
+    pub async fn agg_trades(
+        &self,
+        param: params::PAggTrade,
+    ) -> BianResult<Vec<response::AggTrade>> {
+    }
+
+    /// K 线数据
+    #[api(GET "api/v3/klines")]
+    pub async fn klines(&self, param: params::PKline) -> BianResult<Vec<response::Kline>> {}
+
+    /// 当前平均价格
+    #[api(GET "api/v3/avgPrice")]
+    pub async fn avg_price(&self, param: params::PSymbol) -> BianResult<response::AvgPrice> {}
+
+    /// 24小时价格变动情况(单个symbol)
+    #[api(GET "api/v3/ticker/24hr")]
+    pub async fn h24_ticker(&self, param: params::PSymbol) -> BianResult<response::H24ticker> {}
+
+    /// 24小时价格变动情况(所有symbol)
+    #[api(GET "api/v3/ticker/24hr")]
+    pub async fn h24_tickers(&self) -> BianResult<Vec<response::H24ticker>> {}
+
+    /// 最新价格(单个symbol)
+    #[api(GET "api/v3/ticker/price")]
+    pub async fn price(&self, param: params::PSymbol) -> BianResult<response::SpotPrice> {}
+
+    /// 最新价格
+    #[api(GET "api/v3/ticker/price")]
+    pub async fn prices(&self) -> BianResult<Vec<response::SpotPrice>> {}
+
+    /// 当前最优挂单(单symbol)
+    #[api(GET "api/v3/ticker/bookTicker")]
+    pub async fn book_ticker(
+        &self,
+        param: params::PSymbol,
+    ) -> BianResult<response::SpotBookTicker> {
+    }
+
+    /// 当前最优挂单
+    #[api(GET "api/v3/ticker/bookTicker")]
+    pub async fn book_tickers(&self) -> BianResult<Vec<response::SpotBookTicker>> {}
 }

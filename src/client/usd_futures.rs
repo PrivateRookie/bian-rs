@@ -56,18 +56,18 @@ impl UFuturesHttpClient {
 
     /// 深度信息
     #[api(GET "fapi/v1/depth")]
-    pub async fn depth(&self, param: params::PDepth) -> BianResult<response::Depth> {}
+    pub async fn depth(&self, param: params::PDepth) -> BianResult<response::FuturesDepth> {}
 
     /// 近期成交
     #[api(GET "fapi/v1/trades")]
-    pub async fn trades(&self, param: params::PTrade) -> BianResult<Vec<response::Trade>> {}
+    pub async fn trades(&self, param: params::PTrade) -> BianResult<Vec<response::FuturesTrade>> {}
 
     /// 查询历史成交
     #[api(GET "fapi/v1/historicalTrades")]
     pub async fn historical_trades(
         &self,
         param: params::PHistoricalTrade,
-    ) -> BianResult<Vec<response::HistoricalTrade>> {
+    ) -> BianResult<Vec<response::FuturesHistoricalTrade>> {
     }
 
     /// 近期成交(归集)
@@ -128,19 +128,19 @@ impl UFuturesHttpClient {
 
     /// 最新价格(单个symbol)
     #[api(GET "fapi/v1/ticker/price")]
-    pub async fn price(&self, param: params::PSymbol) -> BianResult<response::Price> {}
+    pub async fn price(&self, param: params::PSymbol) -> BianResult<response::FuturesPrice> {}
 
     /// 最新价格
     #[api(GET "fapi/v1/ticker/price")]
-    pub async fn prices(&self) -> BianResult<Vec<response::Price>> {}
+    pub async fn prices(&self) -> BianResult<Vec<response::FuturesPrice>> {}
 
     /// 当前最优挂单(单symbol)
     #[api(GET "fapi/v1/ticker/bookTicker")]
-    pub async fn book_ticker(&self, param: params::PSymbol) -> BianResult<response::BookTicker> {}
+    pub async fn book_ticker(&self, param: params::PSymbol) -> BianResult<response::FuturesBookTicker> {}
 
     /// 当前最优挂单
     #[api(GET "fapi/v1/ticker/bookTicker")]
-    pub async fn book_tickers(&self) -> BianResult<Vec<response::BookTicker>> {}
+    pub async fn book_tickers(&self) -> BianResult<Vec<response::FuturesBookTicker>> {}
 
     /// 获取市场强平订单
     ///

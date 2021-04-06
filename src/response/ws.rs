@@ -140,10 +140,10 @@ pub struct KData {
     pub interval: Interval,
     /// 这根K线期间第一笔成交ID
     #[serde(rename = "f")]
-    pub first_id: usize,
+    pub first_id: i64,
     /// 这根K线期间末一笔成交ID
     #[serde(rename = "L")]
-    pub last_id: usize,
+    pub last_id: i64,
     /// 这根K线期间第一笔成交价
     #[serde(rename = "o", deserialize_with = "string_as_f64")]
     pub first_price: f64,

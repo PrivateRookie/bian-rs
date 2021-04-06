@@ -6,7 +6,6 @@ use serde::Serialize;
 #[derive(Debug, Serialize)]
 pub struct PDepth {
     pub symbol: String,
-    /// 默认 500; 可选值:[5, 10, 20, 50, 100, 500, 1000]
     pub limit: usize,
 }
 

@@ -274,7 +274,7 @@ pub struct SpotExchangeInfo {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Depth {
+pub struct FuturesDepth {
     pub last_update_id: usize,
     /// 消息时间
     #[serde(rename = "E")]
@@ -291,7 +291,18 @@ pub struct Depth {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Trade {
+pub struct SpotDepth {
+    pub last_update_id: usize,
+    // TODO convert string to float
+    /// 买单
+    pub bids: Vec<(String, String)>,
+    /// 卖单
+    pub asks: Vec<(String, String)>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FuturesTrade {
     pub id: usize,
     #[serde(deserialize_with = "string_as_f64")]
     pub price: f64,
@@ -305,7 +316,21 @@ pub struct Trade {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct HistoricalTrade {
+pub struct SpotTrade {
+    pub id: usize,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    /// 交易成交时间, 和websocket中的T一致
+    pub time: i64,
+    pub is_buyer_maker: bool,
+    pub is_best_match: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FuturesHistoricalTrade {
     pub id: usize,
     #[serde(deserialize_with = "string_as_f64")]
     pub price: f64,
@@ -315,6 +340,21 @@ pub struct HistoricalTrade {
     pub quote_qty: f64,
     pub time: i64,
     pub is_buyer_maker: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SpotHistoricalTrade {
+    pub id: usize,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub quote_qty: f64,
+    pub time: i64,
+    pub is_buyer_maker: bool,
+    pub is_best_match: bool,
 }
 
 #[derive(Debug, Deserialize)]
@@ -401,14 +441,14 @@ pub struct H24ticker {
     pub quote_volume: f64,
     pub open_time: i64,
     pub close_time: i64,
-    pub first_id: usize,
-    pub last_id: usize,
+    pub first_id: i64,
+    pub last_id: i64,
     pub count: usize,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Price {
+pub struct FuturesPrice {
     pub symbol: String,
     #[serde(deserialize_with = "string_as_f64")]
     pub price: f64,
@@ -417,7 +457,23 @@ pub struct Price {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct BookTicker {
+pub struct SpotPrice {
+    pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AvgPrice {
+    pub mins: usize,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FuturesBookTicker {
     pub symbol: String,
     #[serde(deserialize_with = "string_as_f64")]
     pub bid_price: f64,
@@ -428,6 +484,20 @@ pub struct BookTicker {
     #[serde(deserialize_with = "string_as_f64")]
     pub ask_qty: f64,
     pub time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SpotBookTicker {
+    pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub bid_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub bid_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub ask_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub ask_qty: f64,
 }
 
 #[derive(Debug, Deserialize)]
