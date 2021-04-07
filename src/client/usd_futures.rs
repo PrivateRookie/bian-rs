@@ -240,7 +240,7 @@ impl UFuturesHttpClient {
     /// 下单
     /// [DOC](https://binance-docs.github.io/apidocs/futures/cn/#trade-2)
     #[api(SPOST "fapi/v1/order")]
-    pub async fn order(&self, param: params::POrder) -> BianResult<response::Order> {}
+    pub async fn order(&self, param: params::PFuturesOrder) -> BianResult<response::FuturesOrder> {}
 
     /// 批量下单
     /// [DOC](https://binance-docs.github.io/apidocs/futures/cn/#trade-4)
@@ -255,13 +255,13 @@ impl UFuturesHttpClient {
     ///
     /// 至少需要发送 orderId 与 origClientOrderId 中的一个
     #[api(SGET "fapi/v1/order")]
-    pub async fn query_order(&self, param: params::PQueryOrder) -> BianResult<response::Order> {}
+    pub async fn query_order(&self, param: params::PQueryFuturesOrder) -> BianResult<response::FuturesOrder> {}
 
     /// 撤销订单
     ///
     /// 至少需要发送 orderId 与 origClientOrderId 中的一个
     #[api(SDELETE "fapi/v1/order")]
-    pub async fn cancel_order(&self, param: params::PQueryOrder) -> BianResult<response::Order> {}
+    pub async fn cancel_order(&self, param: params::PQueryFuturesOrder) -> BianResult<response::FuturesOrder> {}
 
     /// 撤销全部订单
     #[api(SDELETE "fapi/v1/allOpenOrders")]
@@ -290,14 +290,14 @@ impl UFuturesHttpClient {
 
     /// 查询当前挂单
     #[api(SGET "fapi/v1/openOrder")]
-    pub async fn open_order(&self, param: params::PQueryOrder) -> BianResult<response::Order> {}
+    pub async fn open_order(&self, param: params::PQueryFuturesOrder) -> BianResult<response::FuturesOrder> {}
 
     /// 查询当前全部挂单
     #[api(SGET "fapi/v1/openOrders")]
     pub async fn open_orders(
         &self,
         param: params::POptionSymbolQuery,
-    ) -> BianResult<Vec<response::Order>> {
+    ) -> BianResult<Vec<response::FuturesOrder>> {
     }
 
     /// 查询所有订单(包括历史订单)
@@ -305,7 +305,7 @@ impl UFuturesHttpClient {
     /// - 查询时间范围最大不得超过7天
     /// - 默认查询最近7天内的数据
     #[api(SGET "fapi/v1/allOrders")]
-    pub async fn all_orders(&self, param: params::PHistOrder) -> BianResult<Vec<response::Order>> {}
+    pub async fn all_orders(&self, param: params::PHistOrder) -> BianResult<Vec<response::FuturesOrder>> {}
 
     /// 账户余额V2
     #[api(SGET "fapi/v2/balance")]
@@ -362,7 +362,7 @@ impl UFuturesHttpClient {
     pub async fn user_trades(
         &self,
         param: params::PUserTrade,
-    ) -> BianResult<Vec<response::UserTrade>> {
+    ) -> BianResult<Vec<response::UserFuturesTrade>> {
     }
 }
 

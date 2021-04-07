@@ -65,10 +65,10 @@ pub enum OrderStatus {
     Expired,
 }
 
-/// 订单种类
+/// 期货订单种类
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum OrderType {
+pub enum FuturesOrderType {
     Limit,
     Market,
     Stop,
@@ -76,6 +76,26 @@ pub enum OrderType {
     TakeProfit,
     TakeProfitMarket,
     TrailingStopMarket,
+}
+
+/// 现货订单种类
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum SpotOrderType {
+    ///限价单
+    Limit,
+    ///市价单
+    Market,
+    ///止损单
+    StopLoss,
+    ///限价止损单
+    StopLossLimit,
+    ///止盈单
+    TakeProfit,
+    ///限价止盈单
+    TakeProfitLimit,
+    ///限价只挂单
+    LimitMaker,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

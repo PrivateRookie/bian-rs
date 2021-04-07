@@ -1,6 +1,8 @@
 use std::usize;
 
-use crate::enums::{Interval, MarginType, OrderSide, OrderType, PositionDirect, TimeInForce};
+use crate::enums::{
+    FuturesOrderType, Interval, MarginType, OrderSide, PositionDirect, SpotOrderType, TimeInForce,
+};
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -146,7 +148,7 @@ pub struct PPositionSideDual {
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct POrderSpec {
+pub struct PFuturesOrderSpec {
     /// 交易对
     pub symbol: String,
     /// 买卖方向 `SELL`, `BUY`
@@ -155,7 +157,7 @@ pub struct POrderSpec {
     pub position_side: Option<PositionDirect>,
     /// 订单类型 `LIMIT`, `MARKET`, `STOP`, `TAKE_PROFIT`, `STOP_MARKET`, `TAKE_PROFIT_MARKET`, `TRAILING_STOP_MARKET`
     #[serde(rename = "type")]
-    pub order_type: OrderType,
+    pub order_type: FuturesOrderType,
     /// `true`, `false`; 非双开模式下默认`false`；双开模式下不接受此参数； 使用`closePosition`不支持此参数。
     pub reduce_only: Option<bool>,
     /// 下单数量,使用`closePosition`不支持此参数。
@@ -186,28 +188,66 @@ pub struct POrderSpec {
 }
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct POrder {
+pub struct PFuturesOrder {
     #[serde(flatten)]
-    pub spec: POrderSpec,
+    pub spec: PFuturesOrderSpec,
     #[serde(flatten)]
     pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PSpotOrder {
+    #[serde(flatten)]
+    pub spec: PSpotOrderSpec,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PSpotOrderSpec {
+    pub symbol: String,
+    pub side: OrderSide,
+    #[serde(rename = "type")]
+    pub order_type: SpotOrderType,
+    pub time_in_force: Option<TimeInForce>,
+    pub quantity: Option<f64>,
+    pub quote_order_qty: Option<f64>,
+    pub price: Option<f64>,
+    pub new_client_order_id: Option<String>,
+    pub stop_price: Option<f64>,
+    pub iceberg_qty: Option<f64>,
+    // TODO make it enum
+    pub new_order_resp_type: Option<String>,
 }
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PBatchOrder {
     /// 订单列表，最多支持5个订单
-    pub batch_orders: Vec<POrderSpec>,
+    pub batch_orders: Vec<PFuturesOrderSpec>,
     #[serde(flatten)]
     pub ts: PTimestamp,
 }
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PQueryOrder {
+pub struct PQueryFuturesOrder {
     pub symbol: String,
     pub order_id: Option<usize>,
     pub orig_client_order_id: Option<String>,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PQuerySpotOrder {
+    pub symbol: String,
+    pub order_id: Option<usize>,
+    pub orig_client_order_id: Option<String>,
+    pub new_client_order_id: Option<String>,
     #[serde(flatten)]
     pub ts: PTimestamp,
 }

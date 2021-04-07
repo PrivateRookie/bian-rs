@@ -342,12 +342,12 @@ async fn test_position_side() {
 async fn test_order_test() {
     let client = init_client();
     let ts = params::PTimestamp::now();
-    let param = params::POrder {
-        spec: params::POrderSpec {
+    let param = params::PFuturesOrder {
+        spec: params::PFuturesOrderSpec {
             symbol: "adausdt".to_string(),
             side: OrderSide::Buy,
             position_side: None,
-            order_type: OrderType::Market,
+            order_type: FuturesOrderType::Market,
             reduce_only: Some(false),
             quantity: Some(10.0),
             price: None,

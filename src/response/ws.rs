@@ -2,7 +2,7 @@ use std::usize;
 
 use super::{string_as_f64, string_as_usize};
 use crate::enums::{
-    ContractType, Interval, MarginType, OrderSide, OrderStatus, OrderType, PositionDirect,
+    ContractType, Interval, MarginType, OrderSide, OrderStatus, FuturesOrderType, PositionDirect,
     TimeInForce,
 };
 use crate::error::{APIError, BianResult};
@@ -323,7 +323,7 @@ pub struct OrderData {
     pub direction: OrderSide,
     /// 订单类型
     #[serde(rename = "o")]
-    pub order_type: OrderType,
+    pub order_type: FuturesOrderType,
     /// 有效方式
     #[serde(rename = "f")]
     pub force: TimeInForce,
@@ -544,7 +544,7 @@ pub struct WSOrderEvent {
     /// 订单方向
     pub S: OrderSide,
     /// 订单类型
-    pub o: OrderType,
+    pub o: FuturesOrderType,
     /// 有效方式
     pub f: TimeInForce,
     /// 订单原始数量
@@ -596,7 +596,7 @@ pub struct WSOrderEvent {
     /// 触发价类型
     pub wt: String,
     /// 原始订单类型
-    pub ot: OrderType,
+    pub ot: FuturesOrderType,
     /// 持仓方向
     pub ps: PositionDirect,
     /// 是否为触发平仓单; 仅在条件订单情况下会推送此字段

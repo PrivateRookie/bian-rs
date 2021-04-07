@@ -1,6 +1,9 @@
 use std::{collections::HashMap, usize};
 
-use crate::enums::{MarginType, OrderSide, OrderStatus, OrderType, PositionDirect, TimeInForce};
+use crate::enums::{
+    FuturesOrderType, MarginType, OrderSide, OrderStatus, PositionDirect, SpotOrderType,
+    TimeInForce,
+};
 
 use super::{string_as_f64, string_as_usize};
 use serde::Deserialize;
@@ -226,7 +229,7 @@ pub struct FuturesSymbol {
     /// 开启"priceProtect"的条件订单的触发阈值
     pub trigger_protect: f64,
     pub filters: Vec<FuturesSymbolFilter>,
-    pub order_types: Vec<OrderType>,
+    pub order_types: Vec<FuturesOrderType>,
     pub time_in_force: Vec<String>,
 }
 
@@ -514,7 +517,7 @@ pub struct ForceOrder {
     pub average_price: f64,
     pub status: OrderStatus,
     pub time_in_force: TimeInForce,
-    pub r#type: OrderType,
+    pub r#type: FuturesOrderType,
     pub side: OrderSide,
     pub time: i64,
 }
@@ -596,7 +599,7 @@ pub struct PositionSide {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Order {
+pub struct FuturesOrder {
     pub client_order_id: String,
     #[serde(deserialize_with = "string_as_f64")]
     pub cum_qty: f64,
@@ -620,7 +623,7 @@ pub struct Order {
     pub symbol: String,
     pub time_in_force: TimeInForce,
     #[serde(rename = "type")]
-    pub order_type: OrderType,
+    pub order_type: FuturesOrderType,
     #[serde(deserialize_with = "string_as_f64")]
     pub activate_price: f64,
     #[serde(deserialize_with = "string_as_f64")]
@@ -632,8 +635,156 @@ pub struct Order {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct SpotOrderAck {
+    /// 交易对
+    pub symbol: String,
+    /// 系统订单ID
+    pub order_id: usize,
+    /// OCO订单ID,否则为-1
+    pub order_list_id: i64,
+    /// 客户自己设置的ID
+    pub client_order_id: String,
+    /// 交易时间戳
+    pub transact_time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SpotOrderResult {
+    /// 交易对
+    pub symbol: String,
+    /// 系统订单ID
+    pub order_id: usize,
+    /// OCO订单ID,否则为-1
+    pub order_list_id: i64,
+    /// 客户自己设置的ID
+    pub client_order_id: String,
+    /// 交易时间戳
+    pub transact_time: i64,
+    /// 订单价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    /// 用户设置的原始订单数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub orig_qty: f64,
+    /// 交易的订单数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub executed_qty: f64,
+    /// 累计交易的金额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cummulative_quote_qty: f64,
+    /// 订单状态
+    pub status: OrderStatus,
+    /// 订单的时效方式
+    pub time_in_force: TimeInForce,
+    /// 订单类型， 比如市价单，现价单等
+    #[serde(rename = "type")]
+    pub order_type: SpotOrderType,
+    /// 订单方向
+    pub side: OrderSide,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SpotOrderFull {
+    /// 交易对
+    pub symbol: String,
+    /// 系统订单ID
+    pub order_id: usize,
+    /// OCO订单ID,否则为-1
+    pub order_list_id: i64,
+    /// 客户自己设置的ID
+    pub client_order_id: String,
+    /// 交易时间戳
+    pub transact_time: i64,
+    /// 订单价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    /// 用户设置的原始订单数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub orig_qty: f64,
+    /// 交易的订单数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub executed_qty: f64,
+    /// 累计交易的金额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cummulative_quote_qty: f64,
+    /// 订单状态
+    pub status: OrderStatus,
+    /// 订单的时效方式
+    pub time_in_force: TimeInForce,
+    /// 订单类型， 比如市价单，现价单等
+    #[serde(rename = "type")]
+    pub order_type: SpotOrderType,
+    /// 订单方向
+    pub side: OrderSide,
+    /// 订单中交易的信息
+    pub fills: Vec<OrderFill>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OrderFill {
+    /// 交易的价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    /// 交易的数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    /// 手续费金额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub commission: f64,
+    /// 手续费的币种
+    pub commission_asset: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", untagged)]
+pub enum SpotOrder {
+    Ack(SpotOrderAck),
+    Result(SpotOrderResult),
+    Full(SpotOrderFull),
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SpotOpOrder {
+    /// 交易对
+    pub symbol: String,
+    pub orig_client_order_id: String,
+    /// 系统订单ID
+    pub order_id: usize,
+    /// OCO订单ID,否则为-1
+    pub order_list_id: i64,
+    /// 客户自己设置的ID
+    pub client_order_id: String,
+    /// 订单价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    /// 用户设置的原始订单数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub orig_qty: f64,
+    /// 交易的订单数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub executed_qty: f64,
+    /// 累计交易的金额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cummulative_quote_qty: f64,
+    /// 订单状态
+    pub status: OrderStatus,
+    /// 订单的时效方式
+    pub time_in_force: TimeInForce,
+    /// 订单类型， 比如市价单，现价单等
+    #[serde(rename = "type")]
+    pub order_type: SpotOrderType,
+    /// 订单方向
+    pub side: OrderSide,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", untagged)]
 pub enum BatchOrderResponse {
-    Order(Order),
+    Order(FuturesOrder),
     Code(CodeResponse),
 }
 
@@ -875,7 +1026,7 @@ pub struct PositionRisk {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct UserTrade {
+pub struct UserFuturesTrade {
     /// 是否是买方
     buyer: bool,
     /// 手续费
@@ -909,6 +1060,28 @@ pub struct UserTrade {
     symbol: String,
     /// 时间
     time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UserSpotTrade {
+    pub symbol: String,
+    pub id: usize,
+    pub order_id: usize,
+    pub order_list_id: i64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub quote_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub commission: f64,
+    pub commission_asset: String,
+    pub time: i64,
+    pub is_buyer: bool,
+    pub is_maker: bool,
+    pub is_best_match: bool,
 }
 
 #[derive(Debug, Deserialize)]

@@ -108,7 +108,37 @@ impl SpotHttpClient {
 
 /// 现货账户和交易接口
 impl SpotHttpClient {
+    /// 下单
+    #[api(SPOST "api/v3/order")]
+    pub async fn order(&self, param: params::PSpotOrder) -> BianResult<response::SpotOrder> {}
+
+    /// 撤销订单
+    #[api(SDELETE "api/v3/order")]
+    pub async fn cancel_order(
+        &self,
+        param: params::PQuerySpotOrder,
+    ) -> BianResult<response::SpotOpOrder> {
+    }
+
+    // /// 撤销单一交易对的所有挂单
+    // ///
+    // /// 撤销单一交易对下所有挂单, 包括OCO的挂单。
+    // #[api(SDELETE "api/v3/openOrders")]
+    // pub async fn cancel_open_orders(
+    //     &self,
+    //     param: params::PSymbolWithTs,
+    // ) -> BianResult<Vec<response::SpotOpOrder>> {
+    // }
+
     /// 账户信息
     #[api(SGET "api/v3/account")]
     pub async fn account(&self, param: params::PTimestamp) -> BianResult<response::SpotAccount> {}
+
+    /// 账户成交历史
+    #[api(SGET "api/v3/myTrades")]
+    pub async fn my_trades(
+        &self,
+        param: params::PUserTrade,
+    ) -> BianResult<Vec<response::UserSpotTrade>> {
+    }
 }

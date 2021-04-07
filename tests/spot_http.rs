@@ -1,6 +1,9 @@
-use bian_rs::client::*;
 use bian_rs::enums;
 use bian_rs::params;
+use bian_rs::{
+    client::*,
+    params::{PSpotOrderSpec, PTimestamp},
+};
 
 use std::env;
 const BASE_URL: &str = "https://api.binance.com/";
@@ -146,8 +149,49 @@ async fn test_book_tickers() {
 }
 
 #[tokio::test]
+async fn test_order() {
+    let client = init_client();
+    let mut ts = PTimestamp::now();
+    ts.timestamp -= 10000;
+    let param = params::PSpotOrder {
+        spec: PSpotOrderSpec {
+            symbol: "ADAUSDT".to_string(),
+            side: enums::OrderSide::Buy,
+            order_type: enums::SpotOrderType::Market,
+            time_in_force: None,
+            quantity: Some(10.0),
+            quote_order_qty: None,
+            price: None,
+            new_client_order_id: None,
+            stop_price: None,
+            iceberg_qty: None,
+            new_order_resp_type: None,
+        },
+        ts,
+    };
+    let resp = client.order(param).await.unwrap();
+    dbg!(resp);
+}
+
+#[tokio::test]
 async fn test_account() {
     let client = init_client();
     let param = params::PTimestamp::now();
     dbg!(client.account(param).await.unwrap());
+}
+
+#[tokio::test]
+async fn test_my_trades() {
+    let client = init_client();
+    let mut ts = PTimestamp::now();
+    ts.timestamp -= 10000;
+    let param = params::PUserTrade {
+        symbol: "ADAUSDT".to_string(),
+        start_time: None,
+        end_time: None,
+        from_id: None,
+        limit: Some(20),
+        ts,
+    };
+    dbg!(client.my_trades(param).await.unwrap());
 }

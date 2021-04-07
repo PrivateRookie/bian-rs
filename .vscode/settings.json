@@ -15,6 +15,7 @@
         "bian",
         "chrono",
         "consts",
+        "cummulative",
         "dotenv",
         "ethusdt",
         "fapi",
