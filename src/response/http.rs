@@ -305,7 +305,7 @@ pub struct SpotDepth {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct FuturesTrade {
+pub struct UFuturesTrade {
     pub id: usize,
     #[serde(deserialize_with = "string_as_f64")]
     pub price: f64,
@@ -313,6 +313,20 @@ pub struct FuturesTrade {
     pub qty: f64,
     #[serde(deserialize_with = "string_as_f64")]
     pub quote_qty: f64,
+    pub time: i64,
+    pub is_buyer_maker: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DFuturesTrade {
+    pub id: usize,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub base_qty: f64,
     pub time: i64,
     pub is_buyer_maker: bool,
 }
@@ -333,7 +347,7 @@ pub struct SpotTrade {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct FuturesHistoricalTrade {
+pub struct UFuturesHistoricalTrade {
     pub id: usize,
     #[serde(deserialize_with = "string_as_f64")]
     pub price: f64,
@@ -341,6 +355,20 @@ pub struct FuturesHistoricalTrade {
     pub qty: f64,
     #[serde(deserialize_with = "string_as_f64")]
     pub quote_qty: f64,
+    pub time: i64,
+    pub is_buyer_maker: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DFuturesHistoricalTrade {
+    pub id: usize,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub base_qty: f64,
     pub time: i64,
     pub is_buyer_maker: bool,
 }
@@ -453,6 +481,16 @@ pub struct H24ticker {
 #[serde(rename_all = "camelCase")]
 pub struct FuturesPrice {
     pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    pub time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DFuturesPrice {
+    pub symbol: String,
+    pub ps: String,
     #[serde(deserialize_with = "string_as_f64")]
     pub price: f64,
     pub time: i64,

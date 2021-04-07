@@ -40,7 +40,7 @@ async fn test_exchange_info() {
 async fn test_depth() {
     let client = init_client();
     let param = params::PDepth {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
         limit: 500,
     };
     dbg!(client.depth(param).await.unwrap());
@@ -50,7 +50,7 @@ async fn test_depth() {
 async fn test_trades() {
     let client = init_client();
     let param = params::PTrade {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
         limit: 500,
     };
     dbg!(client.trades(param).await.unwrap());
@@ -60,12 +60,12 @@ async fn test_trades() {
 async fn test_historical_trades() {
     let client = init_client();
     let trade_param = params::PTrade {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
         limit: 10,
     };
     let trades = client.trades(trade_param).await.unwrap();
     let htrade_param = params::PHistoricalTrade {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
         from_id: Some(trades.first().unwrap().id),
         limit: None,
     };
@@ -76,7 +76,7 @@ async fn test_historical_trades() {
 async fn test_agg_trades() {
     let client = init_client();
     let param = params::PAggTrade {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
         limit: None,
         from_id: None,
         start_time: None,
@@ -89,7 +89,7 @@ async fn test_agg_trades() {
 async fn test_klines() {
     let client = init_client();
     let param = params::PKline {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
         interval: enums::Interval::Min1,
         start_time: None,
         end_time: None,
@@ -102,7 +102,7 @@ async fn test_klines() {
 async fn test_continuous_klines() {
     let client = init_client();
     let param = params::PContinuousKline {
-        pair: "BTCUSD_perpetual".to_string(),
+        pair: "BTCUSD_PERP".to_string(),
         interval: enums::Interval::Min1,
         start_time: None,
         end_time: None,
@@ -116,7 +116,7 @@ async fn test_continuous_klines() {
 async fn test_index_price_klines() {
     let client = init_client();
     let param = params::PContinuousKline {
-        pair: "BTCUSD_perpetual".to_string(),
+        pair: "BTCUSD_PERP".to_string(),
         interval: enums::Interval::Min1,
         start_time: None,
         end_time: None,
@@ -130,7 +130,7 @@ async fn test_index_price_klines() {
 async fn test_premium_index() {
     let client = init_client();
     let param = params::PSymbol {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
     };
     dbg!(client.premium_index(param).await.unwrap());
 }
@@ -145,7 +145,7 @@ async fn test_premium_indexes() {
 async fn test_funding_rate() {
     let client = init_client();
     let param = params::PFundingRate {
-        symbol: Some("BTCUSD_perpetual".to_string()),
+        symbol: Some("BTCUSD_PERP".to_string()),
         start_time: None,
         end_time: None,
         limit: Some(3),
@@ -157,7 +157,7 @@ async fn test_funding_rate() {
 async fn test_h24_ticker() {
     let client = init_client();
     let param = params::PSymbol {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
     };
     dbg!(client.h24_ticker(param).await.unwrap());
 }
@@ -171,8 +171,9 @@ async fn test_h24_tickers() {
 #[tokio::test]
 async fn test_price() {
     let client = init_client();
-    let param = params::PSymbol {
-        symbol: "BTCUSD_perpetual".to_string(),
+    let param = params::PSymbolPair {
+        symbol: None,
+        pair: Some("BTCUSD".to_string()),
     };
     dbg!(client.price(param).await.unwrap());
 }
@@ -187,7 +188,7 @@ async fn test_prices() {
 async fn test_book_ticker() {
     let client = init_client();
     let param = params::PSymbol {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
     };
     dbg!(client.book_ticker(param).await.unwrap());
 }
@@ -202,7 +203,7 @@ async fn test_book_tickers() {
 async fn test_all_force_order() {
     let client = init_client();
     let param = params::PForceOrder {
-        symbol: Some("BTCUSD_perpetual".to_string()),
+        symbol: Some("BTCUSD_PERP".to_string()),
         start_time: None,
         end_time: None,
         limit: Some(10),
@@ -214,7 +215,7 @@ async fn test_all_force_order() {
 async fn test_open_interest() {
     let client = init_client();
     let param = params::PSymbol {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
     };
     dbg!(client.open_interest(param).await.unwrap());
 }
@@ -223,7 +224,7 @@ async fn test_open_interest() {
 async fn test_open_interest_hist() {
     let client = init_client();
     let param = params::PFutures {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
         period: Interval::Min1,
         limit: None,
         start_time: None,
@@ -235,7 +236,7 @@ async fn test_open_interest_hist() {
 async fn test_top_long_short_account_ratio() {
     let client = init_client();
     let param = params::PFutures {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
         period: Interval::Min1,
         limit: None,
         start_time: None,
@@ -248,7 +249,7 @@ async fn test_top_long_short_account_ratio() {
 async fn test_top_long_short_position_ratio() {
     let client = init_client();
     let param = params::PFutures {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
         period: Interval::Min1,
         limit: None,
         start_time: None,
@@ -260,7 +261,7 @@ async fn test_top_long_short_position_ratio() {
 async fn test_global_long_short_position_ratio() {
     let client = init_client();
     let param = params::PFutures {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
         period: Interval::Min1,
         limit: None,
         start_time: None,
@@ -276,7 +277,7 @@ async fn test_global_long_short_position_ratio() {
 async fn test_taker_long_short_ratio() {
     let client = init_client();
     let param = params::PFutures {
-        symbol: "BTCUSD_perpetual".to_string(),
+        symbol: "BTCUSD_PERP".to_string(),
         period: Interval::Min1,
         limit: None,
         start_time: None,

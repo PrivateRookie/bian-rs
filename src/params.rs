@@ -77,6 +77,18 @@ pub struct PSymbol {
     pub symbol: String,
 }
 
+/// - symbol 和 pair 不接受同时发送
+/// - 发送 pair的,返回pair对应所有正在交易的symbol数据
+/// - symbol,pair 都没有发送的,返回所有symbol数据
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PSymbolPair {
+    /// 交易对
+    pub symbol: Option<String>,
+    /// 标的交易对
+    pub pair: Option<String>,
+}
+
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PFundingRate {

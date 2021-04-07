@@ -60,14 +60,14 @@ impl UFuturesHttpClient {
 
     /// 近期成交
     #[api(GET "fapi/v1/trades")]
-    pub async fn trades(&self, param: params::PTrade) -> BianResult<Vec<response::FuturesTrade>> {}
+    pub async fn trades(&self, param: params::PTrade) -> BianResult<Vec<response::UFuturesTrade>> {}
 
     /// 查询历史成交
     #[api(GET "fapi/v1/historicalTrades")]
     pub async fn historical_trades(
         &self,
         param: params::PHistoricalTrade,
-    ) -> BianResult<Vec<response::FuturesHistoricalTrade>> {
+    ) -> BianResult<Vec<response::UFuturesHistoricalTrade>> {
     }
 
     /// 近期成交(归集)

@@ -59,14 +59,14 @@ impl DFuturesHttpClient {
 
     /// 近期成交
     #[api(GET "dapi/v1/trades")]
-    pub async fn trades(&self, param: params::PTrade) -> BianResult<Vec<response::FuturesTrade>> {}
+    pub async fn trades(&self, param: params::PTrade) -> BianResult<Vec<response::DFuturesTrade>> {}
 
     /// 查询历史成交
     #[api(GET "dapi/v1/historicalTrades")]
     pub async fn historical_trades(
         &self,
         param: params::PHistoricalTrade,
-    ) -> BianResult<Vec<response::FuturesHistoricalTrade>> {
+    ) -> BianResult<Vec<response::DFuturesHistoricalTrade>> {
     }
 
     /// 近期成交(归集)
@@ -127,11 +127,15 @@ impl DFuturesHttpClient {
 
     /// 最新价格(单个symbol)
     #[api(GET "dapi/v1/ticker/price")]
-    pub async fn price(&self, param: params::PSymbol) -> BianResult<response::FuturesPrice> {}
+    pub async fn price(
+        &self,
+        param: params::PSymbolPair,
+    ) -> BianResult<Vec<response::DFuturesPrice>> {
+    }
 
     /// 最新价格
     #[api(GET "dapi/v1/ticker/price")]
-    pub async fn prices(&self) -> BianResult<Vec<response::FuturesPrice>> {}
+    pub async fn prices(&self) -> BianResult<Vec<response::DFuturesPrice>> {}
 
     /// 当前最优挂单(单symbol)
     #[api(GET "dapi/v1/ticker/bookTicker")]
