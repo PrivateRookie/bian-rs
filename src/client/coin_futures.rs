@@ -11,7 +11,7 @@ use tungstenite::{
     client::{connect_with_config, AutoGenericStream},
     WebSocket,
 };
-/// U 本位合约 http 客户端
+/// 币本位合约 http 客户端
 pub struct DFuturesHttpClient {
     http_client: reqwest::Client,
     pub api_key: String,
@@ -411,8 +411,7 @@ impl DFuturesHttpClient {
     pub async fn close_listen_key(&self) -> BianResult<response::EmptyResponse> {}
 }
 
-/// U 本位合约 websocket 客户端(使用代理)
-/// [doc](https://binance-docs.github.io/apidocs/futures/cn/#websocket)
+/// 币本位合约 websocket 客户端
 pub struct DFuturesWSClient {
     pub proxy: Option<SocketAddr>,
     pub base_url: url::Url,

@@ -384,7 +384,7 @@ impl UFuturesHttpClient {
     pub async fn close_listen_key(&self) -> BianResult<response::EmptyResponse> {}
 }
 
-/// U 本位合约 websocket 客户端(使用代理)
+/// U 本位合约 websocket 客户端
 /// [doc](https://binance-docs.github.io/apidocs/futures/cn/#websocket)
 pub struct UFuturesWSClient {
     pub proxy: Option<SocketAddr>,
