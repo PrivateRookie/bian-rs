@@ -317,7 +317,7 @@ impl UFuturesHttpClient {
 
     /// 账户信息v2
     #[api(SGET "fapi/v2/account")]
-    pub async fn account_v2(&self, param: params::PTimestamp) -> BianResult<response::Account> {}
+    pub async fn account_v2(&self, param: params::PTimestamp) -> BianResult<response::FuturesAccount> {}
 
     /// 调整开仓杠杆
     #[api(SPOST "fapi/v1/leverage")]

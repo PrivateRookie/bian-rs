@@ -4,6 +4,7 @@ use bian_proc::api;
 use hmac::{Hmac, Mac, NewMac};
 use sha2::Sha256;
 
+/// 现货账户客户端
 pub struct SpotHttpClient {
     http_client: reqwest::Client,
     pub api_key: String,
@@ -103,4 +104,11 @@ impl SpotHttpClient {
     /// 当前最优挂单
     #[api(GET "api/v3/ticker/bookTicker")]
     pub async fn book_tickers(&self) -> BianResult<Vec<response::SpotBookTicker>> {}
+}
+
+/// 现货账户和交易接口
+impl SpotHttpClient {
+    /// 账户信息
+    #[api(SGET "api/v3/account")]
+    pub async fn account(&self, param: params::PTimestamp) -> BianResult<response::SpotAccount> {}
 }

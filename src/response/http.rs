@@ -725,7 +725,33 @@ pub struct AccountPosition {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Account {
+pub struct SpotAccount {
+    pub maker_commission: usize,
+    pub taker_commission: usize,
+    pub buyer_commission: usize,
+    pub seller_commission: usize,
+    pub can_trade: bool,
+    pub can_withdraw: bool,
+    pub can_deposit: bool,
+    pub update_time: i64,
+    pub account_type: String,
+    pub balances: Vec<SpotBalance>,
+    pub permissions: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SpotBalance {
+    pub asset: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub free: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub locked: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FuturesAccount {
     /// 手续费等级
     pub fee_tier: i64,
     /// 是否可以交易

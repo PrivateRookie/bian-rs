@@ -1,5 +1,5 @@
-use bian_rs::client::spot::*;
-use bian_rs::enums::{self, *};
+use bian_rs::client::*;
+use bian_rs::enums;
 use bian_rs::params;
 
 use std::env;
@@ -143,4 +143,11 @@ async fn test_book_ticker() {
 async fn test_book_tickers() {
     let client = init_client();
     dbg!(client.book_tickers().await.unwrap());
+}
+
+#[tokio::test]
+async fn test_account() {
+    let client = init_client();
+    let param = params::PTimestamp::now();
+    dbg!(client.account(param).await.unwrap());
 }

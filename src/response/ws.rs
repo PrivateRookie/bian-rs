@@ -529,6 +529,7 @@ pub struct WSOrderUpdate {
     pub event: WSOrderEvent,
 }
 
+#[allow(non_snake_case)]
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WSOrderEvent {

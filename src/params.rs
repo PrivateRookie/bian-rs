@@ -130,7 +130,7 @@ impl PTimestamp {
         let now = chrono::Utc::now();
         PTimestamp {
             timestamp: now.timestamp_millis(),
-            recv_window: None,
+            recv_window: Some(60000),
         }
     }
 }
