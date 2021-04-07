@@ -51,7 +51,7 @@ impl DFuturesHttpClient {
 
     /// 获取交易规则和交易对
     #[api(GET "dapi/v1/exchangeInfo")]
-    pub async fn exchange_info(&self) -> BianResult<response::FuturesExchangeInfo> {}
+    pub async fn exchange_info(&self) -> BianResult<response::UFuturesExchangeInfo> {}
 
     /// 深度信息
     #[api(GET "dapi/v1/depth")]
@@ -101,13 +101,13 @@ impl DFuturesHttpClient {
     #[api(GET "dapi/v1/premiumIndex")]
     pub async fn premium_index(
         &self,
-        param: params::PSymbol,
-    ) -> BianResult<response::PremiumIndex> {
+        param: params::PSymbolPair,
+    ) -> BianResult<Vec<response::DPremiumIndex>> {
     }
 
     /// 最新标记价格和资金费率(所有symbol)
     #[api(GET "dapi/v1/premiumIndex")]
-    pub async fn premium_indexes(&self) -> BianResult<Vec<response::PremiumIndex>> {}
+    pub async fn premium_indexes(&self) -> BianResult<Vec<response::DPremiumIndex>> {}
 
     /// 查询资金费率历史
     #[api(GET "dapi/v1/fundingRate")]
@@ -119,11 +119,15 @@ impl DFuturesHttpClient {
 
     /// 24小时价格变动情况(单个symbol)
     #[api(GET "dapi/v1/ticker/24hr")]
-    pub async fn h24_ticker(&self, param: params::PSymbol) -> BianResult<response::H24ticker> {}
+    pub async fn h24_ticker(
+        &self,
+        param: params::PSymbolPair,
+    ) -> BianResult<Vec<response::DFuturesH24ticker>> {
+    }
 
     /// 24小时价格变动情况(所有symbol)
     #[api(GET "dapi/v1/ticker/24hr")]
-    pub async fn h24_tickers(&self) -> BianResult<Vec<response::H24ticker>> {}
+    pub async fn h24_tickers(&self) -> BianResult<Vec<response::DFuturesH24ticker>> {}
 
     /// 最新价格(单个symbol)
     #[api(GET "dapi/v1/ticker/price")]
@@ -141,13 +145,13 @@ impl DFuturesHttpClient {
     #[api(GET "dapi/v1/ticker/bookTicker")]
     pub async fn book_ticker(
         &self,
-        param: params::PSymbol,
-    ) -> BianResult<response::FuturesBookTicker> {
+        param: params::PSymbolPair,
+    ) -> BianResult<Vec<response::DFuturesBookTicker>> {
     }
 
     /// 当前最优挂单
     #[api(GET "dapi/v1/ticker/bookTicker")]
-    pub async fn book_tickers(&self) -> BianResult<Vec<response::FuturesBookTicker>> {}
+    pub async fn book_tickers(&self) -> BianResult<Vec<response::DFuturesBookTicker>> {}
 
     /// 获取市场强平订单
     ///
@@ -214,14 +218,6 @@ impl DFuturesHttpClient {
     /// 杠杆代币历史净值K线
     #[api(GET "dapi/v1/lvtKlines")]
     pub async fn lvt_klines(&self, param: params::PLvtKlines) -> BianResult<Vec<response::Kline>> {}
-
-    /// 综合指数交易对信息(单个)
-    #[api(GET "dapi/v1/indexInfo")]
-    pub async fn index_info(&self, param: params::PSymbol) -> BianResult<response::IndexInfo> {}
-
-    /// 综合指数交易对信息
-    #[api(GET "dapi/v1/indexInfo")]
-    pub async fn index_infos(&self) -> BianResult<Vec<response::IndexInfo>> {}
 }
 
 /// 账户和交易接口

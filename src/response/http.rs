@@ -257,7 +257,18 @@ pub struct SpotSymbol {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct FuturesExchangeInfo {
+pub struct UFuturesExchangeInfo {
+    pub exchange_filters: Vec<String>,
+    pub rate_limits: Vec<RateLimit>,
+    pub futures_type: String,
+    pub server_time: i64,
+    pub symbols: Vec<FuturesSymbol>,
+    pub timezone: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DFuturesExchangeInfo {
     pub exchange_filters: Vec<String>,
     pub rate_limits: Vec<RateLimit>,
     pub futures_type: String,
@@ -423,10 +434,10 @@ pub struct Kline(
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PremiumIndex {
-    symbol: String,
+pub struct UPremiumIndex {
+    pub symbol: String,
     #[serde(deserialize_with = "string_as_f64")]
-    mark_price: f64,
+    pub mark_price: f64,
     #[serde(deserialize_with = "string_as_f64")]
     pub index_price: f64,
     #[serde(deserialize_with = "string_as_f64")]
@@ -434,6 +445,34 @@ pub struct PremiumIndex {
     pub next_funding_time: i64,
     #[serde(deserialize_with = "string_as_f64")]
     pub interest_rate: f64,
+    pub time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DPremiumIndex {
+    /// 交易对
+    pub symbol: String,
+    /// 基础标的
+    pub pair: String,
+    /// 标记价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub mark_price: f64,
+    /// 指数价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub index_price: f64,
+    /// 预估结算价,仅在交割开始前最后一小时有意义
+    #[serde(deserialize_with = "string_as_f64")]
+    pub estimated_settle_price: f64,
+    /// 最近更新的资金费率,只对永续合约有效，其他合约返回
+    #[serde(deserialize_with = "string_as_f64")]
+    pub last_funding_rate: f64,
+    /// 标的资产基础利率,只对永续合约有效，其他合约返回空
+    #[serde(deserialize_with = "string_as_f64")]
+    pub interest_rate: f64,
+    /// 下次资金费时间，只对永续合约有效，其他合约返回0
+    pub next_funding_time: i64,
+    /// 更新时间
     pub time: i64,
 }
 
@@ -479,6 +518,38 @@ pub struct H24ticker {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct DFuturesH24ticker {
+    pub symbol: String,
+    pub pair: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price_change: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price_change_percent: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub weighted_avg_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub last_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub last_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub open_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub high_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub low_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub volume: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub base_volume: f64,
+    pub open_time: i64,
+    pub close_time: i64,
+    pub first_id: i64,
+    pub last_id: i64,
+    pub count: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct FuturesPrice {
     pub symbol: String,
     #[serde(deserialize_with = "string_as_f64")]
@@ -514,8 +585,24 @@ pub struct AvgPrice {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct FuturesBookTicker {
+pub struct UFuturesBookTicker {
     pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub bid_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub bid_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub ask_price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub ask_qty: f64,
+    pub time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DFuturesBookTicker {
+    pub symbol: String,
+    pub pair: String,
     #[serde(deserialize_with = "string_as_f64")]
     pub bid_price: f64,
     #[serde(deserialize_with = "string_as_f64")]

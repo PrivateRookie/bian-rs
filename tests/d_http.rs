@@ -129,8 +129,9 @@ async fn test_index_price_klines() {
 #[tokio::test]
 async fn test_premium_index() {
     let client = init_client();
-    let param = params::PSymbol {
-        symbol: "BTCUSD_PERP".to_string(),
+    let param = params::PSymbolPair {
+        symbol: None,
+        pair: Some("BTCUSD".to_string()),
     };
     dbg!(client.premium_index(param).await.unwrap());
 }
@@ -156,8 +157,9 @@ async fn test_funding_rate() {
 #[tokio::test]
 async fn test_h24_ticker() {
     let client = init_client();
-    let param = params::PSymbol {
-        symbol: "BTCUSD_PERP".to_string(),
+    let param = params::PSymbolPair {
+        symbol: None,
+        pair: Some("BTCUSD".to_string()),
     };
     dbg!(client.h24_ticker(param).await.unwrap());
 }
@@ -187,8 +189,9 @@ async fn test_prices() {
 #[tokio::test]
 async fn test_book_ticker() {
     let client = init_client();
-    let param = params::PSymbol {
-        symbol: "BTCUSD_PERP".to_string(),
+    let param = params::PSymbolPair {
+        symbol: None,
+        pair: Some("BTCUSD".to_string()),
     };
     dbg!(client.book_ticker(param).await.unwrap());
 }
@@ -297,21 +300,6 @@ async fn test_lvt_klines() {
         end_time: None,
     };
     dbg!(client.lvt_klines(param).await.unwrap());
-}
-
-#[tokio::test]
-async fn test_index_info() {
-    let client = init_client();
-    let param = params::PSymbol {
-        symbol: "DEFIUSDT".to_string(),
-    };
-    dbg!(client.index_info(param).await.unwrap());
-}
-
-#[tokio::test]
-async fn test_index_infos() {
-    let client = init_client();
-    dbg!(client.index_infos().await.unwrap());
 }
 
 #[tokio::test]

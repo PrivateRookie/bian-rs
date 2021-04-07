@@ -52,7 +52,7 @@ impl UFuturesHttpClient {
 
     /// 获取交易规则和交易对
     #[api(GET "fapi/v1/exchangeInfo")]
-    pub async fn exchange_info(&self) -> BianResult<response::FuturesExchangeInfo> {}
+    pub async fn exchange_info(&self) -> BianResult<response::UFuturesExchangeInfo> {}
 
     /// 深度信息
     #[api(GET "fapi/v1/depth")]
@@ -103,12 +103,12 @@ impl UFuturesHttpClient {
     pub async fn premium_index(
         &self,
         param: params::PSymbol,
-    ) -> BianResult<response::PremiumIndex> {
+    ) -> BianResult<response::UPremiumIndex> {
     }
 
     /// 最新标记价格和资金费率(所有symbol)
     #[api(GET "fapi/v1/premiumIndex")]
-    pub async fn premium_indexes(&self) -> BianResult<Vec<response::PremiumIndex>> {}
+    pub async fn premium_indexes(&self) -> BianResult<Vec<response::UPremiumIndex>> {}
 
     /// 查询资金费率历史
     #[api(GET "fapi/v1/fundingRate")]
@@ -136,11 +136,15 @@ impl UFuturesHttpClient {
 
     /// 当前最优挂单(单symbol)
     #[api(GET "fapi/v1/ticker/bookTicker")]
-    pub async fn book_ticker(&self, param: params::PSymbol) -> BianResult<response::FuturesBookTicker> {}
+    pub async fn book_ticker(
+        &self,
+        param: params::PSymbol,
+    ) -> BianResult<response::UFuturesBookTicker> {
+    }
 
     /// 当前最优挂单
     #[api(GET "fapi/v1/ticker/bookTicker")]
-    pub async fn book_tickers(&self) -> BianResult<Vec<response::FuturesBookTicker>> {}
+    pub async fn book_tickers(&self) -> BianResult<Vec<response::UFuturesBookTicker>> {}
 
     /// 获取市场强平订单
     ///
@@ -255,13 +259,21 @@ impl UFuturesHttpClient {
     ///
     /// 至少需要发送 orderId 与 origClientOrderId 中的一个
     #[api(SGET "fapi/v1/order")]
-    pub async fn query_order(&self, param: params::PQueryFuturesOrder) -> BianResult<response::FuturesOrder> {}
+    pub async fn query_order(
+        &self,
+        param: params::PQueryFuturesOrder,
+    ) -> BianResult<response::FuturesOrder> {
+    }
 
     /// 撤销订单
     ///
     /// 至少需要发送 orderId 与 origClientOrderId 中的一个
     #[api(SDELETE "fapi/v1/order")]
-    pub async fn cancel_order(&self, param: params::PQueryFuturesOrder) -> BianResult<response::FuturesOrder> {}
+    pub async fn cancel_order(
+        &self,
+        param: params::PQueryFuturesOrder,
+    ) -> BianResult<response::FuturesOrder> {
+    }
 
     /// 撤销全部订单
     #[api(SDELETE "fapi/v1/allOpenOrders")]
@@ -290,7 +302,11 @@ impl UFuturesHttpClient {
 
     /// 查询当前挂单
     #[api(SGET "fapi/v1/openOrder")]
-    pub async fn open_order(&self, param: params::PQueryFuturesOrder) -> BianResult<response::FuturesOrder> {}
+    pub async fn open_order(
+        &self,
+        param: params::PQueryFuturesOrder,
+    ) -> BianResult<response::FuturesOrder> {
+    }
 
     /// 查询当前全部挂单
     #[api(SGET "fapi/v1/openOrders")]
@@ -305,7 +321,11 @@ impl UFuturesHttpClient {
     /// - 查询时间范围最大不得超过7天
     /// - 默认查询最近7天内的数据
     #[api(SGET "fapi/v1/allOrders")]
-    pub async fn all_orders(&self, param: params::PHistOrder) -> BianResult<Vec<response::FuturesOrder>> {}
+    pub async fn all_orders(
+        &self,
+        param: params::PHistOrder,
+    ) -> BianResult<Vec<response::FuturesOrder>> {
+    }
 
     /// 账户余额V2
     #[api(SGET "fapi/v2/balance")]
@@ -317,7 +337,11 @@ impl UFuturesHttpClient {
 
     /// 账户信息v2
     #[api(SGET "fapi/v2/account")]
-    pub async fn account_v2(&self, param: params::PTimestamp) -> BianResult<response::FuturesAccount> {}
+    pub async fn account_v2(
+        &self,
+        param: params::PTimestamp,
+    ) -> BianResult<response::FuturesAccount> {
+    }
 
     /// 调整开仓杠杆
     #[api(SPOST "fapi/v1/leverage")]

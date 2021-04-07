@@ -21,8 +21,13 @@ impl<'de> Visitor<'de> for F64Visitor {
     where
         E: serde::de::Error,
     {
-        v.parse::<f64>()
-            .map_err(|_| E::invalid_value(Unexpected::Str(v), &"a string representation as f64"))
+        if v.is_empty() {
+            Ok(0.0)
+        } else {
+            v.parse::<f64>().map_err(|_| {
+                E::invalid_value(Unexpected::Str(v), &"a string representation as f64")
+            })
+        }
     }
 }
 
@@ -44,8 +49,13 @@ impl<'de> Visitor<'de> for UsizeVisitor {
     where
         E: serde::de::Error,
     {
-        v.parse::<usize>()
-            .map_err(|_| E::invalid_value(Unexpected::Str(v), &"a string representation as usize"))
+        if v.is_empty() {
+            Ok(0)
+        } else {
+            v.parse::<usize>().map_err(|_| {
+                E::invalid_value(Unexpected::Str(v), &"a string representation as usize")
+            })
+        }
     }
 }
 
