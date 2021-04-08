@@ -22,7 +22,7 @@ async fn test_ping() {
 async fn test_balance() {
     let client = init_client();
     let params = params::PTimestamp::now();
-    client.account_balance_v2(params).await.unwrap();
+    client.account_balance(params).await.unwrap();
 }
 
 #[tokio::test]
@@ -102,7 +102,7 @@ async fn test_klines() {
 async fn test_continuous_klines() {
     let client = init_client();
     let param = params::PContinuousKline {
-        pair: "BTCUSD_PERP".to_string(),
+        pair: "BTCUSD".to_string(),
         interval: enums::Interval::Min1,
         start_time: None,
         end_time: None,
@@ -116,7 +116,7 @@ async fn test_continuous_klines() {
 async fn test_index_price_klines() {
     let client = init_client();
     let param = params::PContinuousKline {
-        pair: "BTCUSD_PERP".to_string(),
+        pair: "BTCUSD".to_string(),
         interval: enums::Interval::Min1,
         start_time: None,
         end_time: None,
@@ -226,8 +226,8 @@ async fn test_open_interest() {
 #[tokio::test]
 async fn test_open_interest_hist() {
     let client = init_client();
-    let param = params::PFutures {
-        symbol: "BTCUSD_PERP".to_string(),
+    let param = params::PDFutures {
+        pair: "BTCUSD".to_string(),
         period: Interval::Min1,
         limit: None,
         start_time: None,
@@ -238,8 +238,8 @@ async fn test_open_interest_hist() {
 #[tokio::test]
 async fn test_top_long_short_account_ratio() {
     let client = init_client();
-    let param = params::PFutures {
-        symbol: "BTCUSD_PERP".to_string(),
+    let param = params::PDFutures {
+        pair: "BTCUSD".to_string(),
         period: Interval::Min1,
         limit: None,
         start_time: None,
@@ -251,8 +251,8 @@ async fn test_top_long_short_account_ratio() {
 #[tokio::test]
 async fn test_top_long_short_position_ratio() {
     let client = init_client();
-    let param = params::PFutures {
-        symbol: "BTCUSD_PERP".to_string(),
+    let param = params::PDFutures {
+        pair: "BTCUSD".to_string(),
         period: Interval::Min1,
         limit: None,
         start_time: None,
@@ -263,8 +263,8 @@ async fn test_top_long_short_position_ratio() {
 #[tokio::test]
 async fn test_global_long_short_position_ratio() {
     let client = init_client();
-    let param = params::PFutures {
-        symbol: "BTCUSD_PERP".to_string(),
+    let param = params::PDFutures {
+        pair: "BTCUSD".to_string(),
         period: Interval::Min1,
         limit: None,
         start_time: None,
@@ -277,29 +277,17 @@ async fn test_global_long_short_position_ratio() {
 }
 
 #[tokio::test]
-async fn test_taker_long_short_ratio() {
+async fn test_taker_buy_sell_vol() {
     let client = init_client();
-    let param = params::PFutures {
-        symbol: "BTCUSD_PERP".to_string(),
+    let param = params::PTakerBullSell {
+        pair: "BTCUSD".to_string(),
+        contact_type: ContractType::Perpetual,
         period: Interval::Min1,
-        limit: None,
+        limit: Some(500),
         start_time: None,
         end_time: None,
     };
-    dbg!(client.taker_long_short_ratio(param).await.unwrap());
-}
-
-#[tokio::test]
-async fn test_lvt_klines() {
-    let client = init_client();
-    let param = params::PLvtKlines {
-        symbol: "BTCUP".to_string(),
-        interval: Interval::Min1,
-        limit: None,
-        start_time: None,
-        end_time: None,
-    };
-    dbg!(client.lvt_klines(param).await.unwrap());
+    dbg!(client.taker_buy_sell_vol(param).await.unwrap());
 }
 
 #[tokio::test]
@@ -307,7 +295,7 @@ async fn test_update_position_side() {
     let client = init_client();
     let now = chrono::Utc::now();
     let param = params::PPositionSideDual {
-        dual_side_position: false,
+        dual_side_position: true,
         ts: params::PTimestamp {
             timestamp: now.timestamp_millis(),
             recv_window: None,

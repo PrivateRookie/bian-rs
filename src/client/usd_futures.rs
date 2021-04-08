@@ -162,7 +162,7 @@ impl UFuturesHttpClient {
     pub async fn open_interest(
         &self,
         param: params::PSymbol,
-    ) -> BianResult<response::OpenInterest> {
+    ) -> BianResult<response::UOpenInterest> {
     }
 
     /// 合约持仓量
@@ -172,15 +172,15 @@ impl UFuturesHttpClient {
     #[api(GET "futures/data/openInterestHist")]
     pub async fn open_interest_hist(
         &self,
-        param: params::PFutures,
-    ) -> BianResult<Vec<response::OpenInterestHist>> {
+        param: params::PUFutures,
+    ) -> BianResult<Vec<response::UOpenInterestHist>> {
     }
 
     /// 大户账户数多空比
     #[api(GET "futures/data/topLongShortAccountRatio")]
     pub async fn top_long_short_account_ratio(
         &self,
-        param: params::PFutures,
+        param: params::PUFutures,
     ) -> BianResult<Vec<response::LongShortRatio>> {
     }
 
@@ -188,7 +188,7 @@ impl UFuturesHttpClient {
     #[api(GET "futures/data/topLongShortPositionRatio")]
     pub async fn top_long_short_position_ratio(
         &self,
-        param: params::PFutures,
+        param: params::PUFutures,
     ) -> BianResult<Vec<response::LongShortRatio>> {
     }
 
@@ -196,7 +196,7 @@ impl UFuturesHttpClient {
     #[api(GET "futures/data/globalLongShortAccountRatio")]
     pub async fn global_long_short_position_ratio(
         &self,
-        param: params::PFutures,
+        param: params::PUFutures,
     ) -> BianResult<Vec<response::LongShortRatio>> {
     }
 
@@ -204,7 +204,7 @@ impl UFuturesHttpClient {
     #[api(GET "futures/data/takerlongshortRatio")]
     pub async fn taker_long_short_ratio(
         &self,
-        param: params::PFutures,
+        param: params::PUFutures,
     ) -> BianResult<Vec<response::TakerLongShortRatio>> {
     }
 
@@ -332,7 +332,7 @@ impl UFuturesHttpClient {
     pub async fn account_balance_v2(
         &self,
         param: params::PTimestamp,
-    ) -> BianResult<Vec<response::AccountBalance>> {
+    ) -> BianResult<Vec<response::UFuturesAccountBalance>> {
     }
 
     /// 账户信息v2

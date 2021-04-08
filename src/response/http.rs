@@ -1,8 +1,8 @@
 use std::{collections::HashMap, usize};
 
 use crate::enums::{
-    FuturesOrderType, MarginType, OrderSide, OrderStatus, PositionDirect, SpotOrderType,
-    TimeInForce,
+    ContractType, FuturesOrderType, MarginType, OrderSide, OrderStatus, PositionDirect,
+    SpotOrderType, TimeInForce,
 };
 
 use super::{string_as_f64, string_as_usize};
@@ -14,7 +14,7 @@ pub struct EmptyResponse(HashMap<String, String>);
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct AccountBalance {
+pub struct UFuturesAccountBalance {
     pub account_alias: String,
     pub asset: String,
     #[serde(deserialize_with = "string_as_f64")]
@@ -27,6 +27,23 @@ pub struct AccountBalance {
     pub available_balance: f64,
     #[serde(deserialize_with = "string_as_f64")]
     pub max_withdraw_amount: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DFuturesAccountBalance {
+    pub account_alias: String,
+    pub asset: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub balance: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cross_wallet_balance: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cross_un_pnl: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub available_balance: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub withdraw_available: f64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -189,7 +206,7 @@ pub struct CodeResponse {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct FuturesSymbol {
+pub struct UFuturesSymbol {
     /// 交易对
     pub symbol: String,
     /// 标的交易对
@@ -235,6 +252,47 @@ pub struct FuturesSymbol {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct DFuturesSymbol {
+    /// 交易对
+    pub symbol: String,
+    /// 标的交易对
+    pub pair: String,
+    /// 合约类型
+    pub contract_type: String,
+    /// 交割日期
+    pub delivery_date: i64,
+    /// 上线日期
+    pub onboard_date: i64,
+    /// 交易对状态
+    pub contract_status: String,
+    /// 交易对大小
+    pub contract_size: i64,
+    /// 标的资产
+    pub base_asset: String,
+    /// 报价资产
+    pub quote_asset: String,
+    /// 保证金资产
+    pub margin_asset: String,
+    /// 价格小数点位数
+    pub price_precision: usize,
+    /// 数量小数点位数
+    pub quantity_precision: usize,
+    /// 标的资产精度
+    pub base_asset_precision: usize,
+    /// 报价资产精度
+    pub quote_precision: usize,
+    pub underlying_type: String,
+    pub underlying_sub_type: Vec<String>,
+    #[serde(deserialize_with = "string_as_f64")]
+    /// 开启"priceProtect"的条件订单的触发阈值
+    pub trigger_protect: f64,
+    pub filters: Vec<FuturesSymbolFilter>,
+    pub order_types: Vec<FuturesOrderType>,
+    pub time_in_force: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SpotSymbol {
     /// 交易对
     pub symbol: String,
@@ -262,7 +320,7 @@ pub struct UFuturesExchangeInfo {
     pub rate_limits: Vec<RateLimit>,
     pub futures_type: String,
     pub server_time: i64,
-    pub symbols: Vec<FuturesSymbol>,
+    pub symbols: Vec<UFuturesSymbol>,
     pub timezone: String,
 }
 
@@ -271,9 +329,8 @@ pub struct UFuturesExchangeInfo {
 pub struct DFuturesExchangeInfo {
     pub exchange_filters: Vec<String>,
     pub rate_limits: Vec<RateLimit>,
-    pub futures_type: String,
     pub server_time: i64,
-    pub symbols: Vec<FuturesSymbol>,
+    pub symbols: Vec<DFuturesSymbol>,
     pub timezone: String,
 }
 
@@ -649,7 +706,7 @@ pub struct ForceOrder {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct OpenInterest {
+pub struct UOpenInterest {
     /// 未平仓合约数量
     #[serde(deserialize_with = "string_as_f64")]
     pub open_interest: f64,
@@ -660,8 +717,34 @@ pub struct OpenInterest {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct OpenInterestHist {
+pub struct DOpenInterest {
+    /// 未平仓合约数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub open_interest: f64,
     pub symbol: String,
+    pub pair: String,
+    pub contract_type: ContractType,
+    /// 撮合引擎时间
+    pub time: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UOpenInterestHist {
+    pub symbol: String,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub sum_open_interest: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub sum_open_interest_value: f64,
+    #[serde(deserialize_with = "string_as_usize")]
+    pub timestamp: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DOpenInterestHist {
+    pub pair: String,
+    pub contract_type: ContractType,
     #[serde(deserialize_with = "string_as_f64")]
     pub sum_open_interest: f64,
     #[serde(deserialize_with = "string_as_f64")]
@@ -694,6 +777,22 @@ pub struct TakerLongShortRatio {
     #[serde(deserialize_with = "string_as_f64")]
     pub sell_vol: f64,
     #[serde(deserialize_with = "string_as_usize")]
+    pub timestamp: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TakerBuySellVol {
+    pub pair: String,
+    pub contact_type: ContractType,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub taker_buy_vol: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub taker_sell_vol: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub taker_buy_vol_value: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub taker_sell_vol_value: f64,
     pub timestamp: usize,
 }
 

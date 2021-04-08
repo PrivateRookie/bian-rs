@@ -1,7 +1,8 @@
 use std::usize;
 
 use crate::enums::{
-    FuturesOrderType, Interval, MarginType, OrderSide, PositionDirect, SpotOrderType, TimeInForce,
+    ContractType, FuturesOrderType, Interval, MarginType, OrderSide, PositionDirect, SpotOrderType,
+    TimeInForce,
 };
 use serde::Serialize;
 
@@ -112,9 +113,32 @@ pub struct PForceOrder {
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PFutures {
+pub struct PUFutures {
     pub symbol: String,
     pub period: Interval,
+    /// 默认30，最大500
+    pub limit: Option<usize>,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PDFutures {
+    pub pair: String,
+    pub period: Interval,
+    /// 默认30，最大500
+    pub limit: Option<usize>,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PTakerBullSell {
+    pub pair: String,
+    pub period: Interval,
+    pub contact_type: ContractType,
     /// 默认30，最大500
     pub limit: Option<usize>,
     pub start_time: Option<i64>,

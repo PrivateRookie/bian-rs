@@ -51,7 +51,7 @@ impl DFuturesHttpClient {
 
     /// 获取交易规则和交易对
     #[api(GET "dapi/v1/exchangeInfo")]
-    pub async fn exchange_info(&self) -> BianResult<response::UFuturesExchangeInfo> {}
+    pub async fn exchange_info(&self) -> BianResult<response::DFuturesExchangeInfo> {}
 
     /// 深度信息
     #[api(GET "dapi/v1/depth")]
@@ -169,7 +169,7 @@ impl DFuturesHttpClient {
     pub async fn open_interest(
         &self,
         param: params::PSymbol,
-    ) -> BianResult<response::OpenInterest> {
+    ) -> BianResult<response::DOpenInterest> {
     }
 
     /// 合约持仓量
@@ -179,15 +179,15 @@ impl DFuturesHttpClient {
     #[api(GET "futures/data/openInterestHist")]
     pub async fn open_interest_hist(
         &self,
-        param: params::PFutures,
-    ) -> BianResult<Vec<response::OpenInterestHist>> {
+        param: params::PDFutures,
+    ) -> BianResult<Vec<response::DOpenInterestHist>> {
     }
 
     /// 大户账户数多空比
     #[api(GET "futures/data/topLongShortAccountRatio")]
     pub async fn top_long_short_account_ratio(
         &self,
-        param: params::PFutures,
+        param: params::PDFutures,
     ) -> BianResult<Vec<response::LongShortRatio>> {
     }
 
@@ -195,7 +195,7 @@ impl DFuturesHttpClient {
     #[api(GET "futures/data/topLongShortPositionRatio")]
     pub async fn top_long_short_position_ratio(
         &self,
-        param: params::PFutures,
+        param: params::PDFutures,
     ) -> BianResult<Vec<response::LongShortRatio>> {
     }
 
@@ -203,21 +203,17 @@ impl DFuturesHttpClient {
     #[api(GET "futures/data/globalLongShortAccountRatio")]
     pub async fn global_long_short_position_ratio(
         &self,
-        param: params::PFutures,
+        param: params::PDFutures,
     ) -> BianResult<Vec<response::LongShortRatio>> {
     }
 
     /// 合约主动买卖量
-    #[api(GET "futures/data/takerlongshortRatio")]
-    pub async fn taker_long_short_ratio(
+    #[api(GET "futures/data/takerBuySellVol")]
+    pub async fn taker_buy_sell_vol(
         &self,
-        param: params::PFutures,
-    ) -> BianResult<Vec<response::TakerLongShortRatio>> {
+        param: params::PTakerBullSell,
+    ) -> BianResult<Vec<response::TakerBuySellVol>> {
     }
-
-    /// 杠杆代币历史净值K线
-    #[api(GET "dapi/v1/lvtKlines")]
-    pub async fn lvt_klines(&self, param: params::PLvtKlines) -> BianResult<Vec<response::Kline>> {}
 }
 
 /// 账户和交易接口
@@ -326,12 +322,12 @@ impl DFuturesHttpClient {
     ) -> BianResult<Vec<response::FuturesOrder>> {
     }
 
-    /// 账户余额V2
-    #[api(SGET "dapi/v2/balance")]
-    pub async fn account_balance_v2(
+    /// 账户余额
+    #[api(SGET "dapi/v1/balance")]
+    pub async fn account_balance(
         &self,
         param: params::PTimestamp,
-    ) -> BianResult<Vec<response::AccountBalance>> {
+    ) -> BianResult<Vec<response::DFuturesAccountBalance>> {
     }
 
     /// 账户信息v2

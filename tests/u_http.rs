@@ -222,7 +222,7 @@ async fn test_open_interest() {
 #[tokio::test]
 async fn test_open_interest_hist() {
     let client = init_client();
-    let param = params::PFutures {
+    let param = params::PUFutures {
         symbol: "BTCUSDT".to_string(),
         period: Interval::Min1,
         limit: None,
@@ -234,7 +234,7 @@ async fn test_open_interest_hist() {
 #[tokio::test]
 async fn test_top_long_short_account_ratio() {
     let client = init_client();
-    let param = params::PFutures {
+    let param = params::PUFutures {
         symbol: "BTCUSDT".to_string(),
         period: Interval::Min1,
         limit: None,
@@ -247,7 +247,7 @@ async fn test_top_long_short_account_ratio() {
 #[tokio::test]
 async fn test_top_long_short_position_ratio() {
     let client = init_client();
-    let param = params::PFutures {
+    let param = params::PUFutures {
         symbol: "BTCUSDT".to_string(),
         period: Interval::Min1,
         limit: None,
@@ -259,7 +259,7 @@ async fn test_top_long_short_position_ratio() {
 #[tokio::test]
 async fn test_global_long_short_position_ratio() {
     let client = init_client();
-    let param = params::PFutures {
+    let param = params::PUFutures {
         symbol: "BTCUSDT".to_string(),
         period: Interval::Min1,
         limit: None,
@@ -275,7 +275,7 @@ async fn test_global_long_short_position_ratio() {
 #[tokio::test]
 async fn test_taker_long_short_ratio() {
     let client = init_client();
-    let param = params::PFutures {
+    let param = params::PUFutures {
         symbol: "BTCUSDT".to_string(),
         period: Interval::Min1,
         limit: None,
