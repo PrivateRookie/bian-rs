@@ -25,7 +25,7 @@ bian-rs = { git = "https://github.com/PrivateRookie/bian-rs.git" }
 ### http 接口
 
 ```rust
-use bian_rs::UFuturesHttpClient;
+use bian_rs::client::UFuturesHttpClient;
 use std::env;
 
 #[tokio::main]
