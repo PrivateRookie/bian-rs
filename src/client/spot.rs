@@ -130,6 +130,11 @@ impl SpotHttpClient {
     // ) -> BianResult<Vec<response::SpotOpOrder>> {
     // }
 
+    /// OCO 下单
+    /// [DOC](https://binance-docs.github.io/apidocs/spot/cn/#oco-trade)
+    #[api(SPOST "api/v3/order/oco")]
+    pub async fn oco_order(&self, param: params::POcoOrder) -> BianResult<response::OcoOrder> {}
+
     /// 账户信息
     #[api(SGET "api/v3/account")]
     pub async fn account(&self, param: params::PTimestamp) -> BianResult<response::SpotAccount> {}

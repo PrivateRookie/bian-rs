@@ -190,6 +190,30 @@ pub enum RateLimitType {
     Orders,
 }
 
+/// OCO 状态 (状态类型集)
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OcoStatus {
+    /// 当ListStatus响应失败的操作时使用。 (订单完成或取消订单)
+    Response,
+    /// 当已经下单或者订单有更新时
+    ExecStarted,
+    /// 当订单执行结束或者不在激活状态
+    AllDone,
+}
+
+/// OCO 订单状态 (订单状态集)
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OcoOrderStatus {
+    /// 当已经下单或者订单有更新时
+    Executing,
+    /// 当订单执行结束或者不在激活状态
+    AllDone,
+    /// 当订单状态响应失败(订单完成或取消订单)
+    REJECT,
+}
+
 pub enum Method {
     GET,
     POST,

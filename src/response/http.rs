@@ -1,8 +1,8 @@
 use std::{collections::HashMap, usize};
 
 use crate::enums::{
-    ContractType, FuturesOrderType, MarginType, OrderSide, OrderStatus, PositionDirect,
-    SpotOrderType, TimeInForce,
+    ContractType, FuturesOrderType, MarginType, OcoOrderStatus, OcoStatus, OrderSide, OrderStatus,
+    PositionDirect, SpotOrderType, TimeInForce,
 };
 
 use super::{string_as_f64, string_as_usize};
@@ -1010,6 +1010,53 @@ pub struct SpotOpOrder {
 pub enum BatchOrderResponse {
     Order(FuturesOrder),
     Code(CodeResponse),
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OcoOrder {
+    pub order_list_id: usize,
+    // DOUBT should be enum ?
+    pub contingency_type: String,
+    pub list_status_type: OcoStatus,
+    pub list_order_status: OcoOrderStatus,
+    pub list_client_order_id: String,
+    pub transaction_time: i64,
+    pub symbol: String,
+    pub orders: Vec<OcoOrderDesc>,
+    pub order_reports: Vec<OcoOrderReport>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OcoOrderDesc {
+    pub symbol: String,
+    pub order_id: usize,
+    pub client_order_id: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OcoOrderReport {
+    pub symbol: String,
+    pub order_id: usize,
+    pub order_list_id: usize,
+    pub client_order_id: String,
+    pub transact_time: i64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub orig_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub executed_qty: f64,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cummulative_quote_qty: f64,
+    pub status: OrderStatus,
+    pub time_in_force: TimeInForce,
+    pub order_type: SpotOrderType,
+    pub side: OrderSide,
+    #[serde(deserialize_with = "string_as_f64")]
+    pub stop_price: f64,
 }
 
 #[derive(Debug, Deserialize)]

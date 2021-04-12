@@ -260,6 +260,38 @@ pub struct PSpotOrderSpec {
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct POcoOrder {
+    pub spec: POcoOrderSpec,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct POcoOrderSpec {
+    pub symbol: String,
+    /// 整个orderList的唯一ID
+    pub list_client_order_id: Option<String>,
+    pub side: OrderSide,
+    pub quantity: f64,
+    /// 限价单的唯一ID
+    pub limit_client_order_id: Option<String>,
+    pub price: f64,
+    pub limit_iceberg_qty: Option<f64>,
+    /// 止损/止损限价单的唯一ID
+    pub stop_client_order_id: Option<String>,
+    pub stop_price: f64,
+    /// 如果提供，须配合提交 stopLimitTimeInForce
+    pub stop_limit_price: Option<f64>,
+    pub stop_iceberg_qty: Option<f64>,
+    /// 有效值 GTC/FOK/IOC
+    pub stop_limit_time_in_force: Option<TimeInForce>,
+    // TODO make it enum
+    pub new_order_resp_type: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PBatchOrder {
     /// 订单列表，最多支持5个订单
     pub batch_orders: Vec<PFuturesOrderSpec>,
