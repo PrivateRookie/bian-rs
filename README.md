@@ -34,7 +34,7 @@ async fn main() {
     let secret_key = "your secret key";
     // 注意末尾的 "/" 必不可少
     let base_url = "https://fapi.binance.com/";
-    let client UFuturesHttpClient::new(api_key, secret_key, base_url);
+    let client = UFuturesHttpClient::new(api_key, secret_key, base_url);
     // 测试是否连通
     client.ping().await.unwrap();
 }
