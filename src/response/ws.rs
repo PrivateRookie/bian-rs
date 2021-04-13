@@ -245,7 +245,7 @@ pub struct WSMiniTicker {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct WSTicker {
+pub struct WSFuturesTicker {
     /// 事件类型 24hrTicker
     #[serde(rename = "e")]
     pub event_type: String,
@@ -301,7 +301,78 @@ pub struct WSTicker {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct WSBookTicker {
+pub struct WSSpotTicker {
+    /// 事件类型 24hrTicker
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 交易对
+    #[serde(rename = "s")]
+    pub pair: String,
+    /// 24小时价格变化
+    #[serde(rename = "p", deserialize_with = "string_as_f64")]
+    pub price_24h_chg: f64,
+    /// 24小时价格变化(百分比)
+    #[serde(rename = "P", deserialize_with = "string_as_f64")]
+    pub price_24h_chg_pct: f64,
+    /// 平均价格
+    #[serde(rename = "w", deserialize_with = "string_as_f64")]
+    pub price_avg: f64,
+    /// 整整24小时之前，向前数的最后一次成交价格
+    #[serde(rename = "x", deserialize_with = "string_as_f64")]
+    pub prev_24h_price: f64,
+    /// 最新成交价格
+    #[serde(rename = "c", deserialize_with = "string_as_f64")]
+    pub price_last_trade: f64,
+    /// 最新成交价格上的成交量
+    #[serde(rename = "Q", deserialize_with = "string_as_f64")]
+    pub volume_last_trade: f64,
+    /// 目前最高买单价
+    #[serde(rename = "b", deserialize_with = "string_as_f64")]
+    pub current_highest_price: f64,
+    /// 目前最高买单价单的挂单量
+    #[serde(rename = "B", deserialize_with = "string_as_f64")]
+    pub current_highest_qty: f64,
+    /// 目前最低买单价
+    #[serde(rename = "a", deserialize_with = "string_as_f64")]
+    pub current_lowest_price: f64,
+    /// 目前最低买单价单的挂单量
+    #[serde(rename = "A", deserialize_with = "string_as_f64")]
+    pub current_lowest_qty: f64,
+    /// 24小时内第一笔成交的价格
+    #[serde(rename = "o", deserialize_with = "string_as_f64")]
+    pub price_24h_first_trade: f64,
+    /// 24小时内最高成交价
+    #[serde(rename = "h", deserialize_with = "string_as_f64")]
+    pub high: f64,
+    /// 24小时内最低成交价
+    #[serde(rename = "l", deserialize_with = "string_as_f64")]
+    pub low: f64,
+    /// 24小时内成交量
+    #[serde(rename = "v", deserialize_with = "string_as_f64")]
+    pub volume: f64,
+    /// 24小时内成交额
+    #[serde(rename = "q", deserialize_with = "string_as_f64")]
+    pub amount: f64,
+    #[serde(rename = "O")]
+    pub open_time: i64,
+    #[serde(rename = "C")]
+    pub close_time: i64,
+    /// 24小时内第一笔成交交易ID
+    #[serde(rename = "F")]
+    pub first_trade_id: u64,
+    /// 24小时内最后一笔成交交易ID
+    #[serde(rename = "L")]
+    pub last_trade_id: f64,
+    #[serde(rename = "n")]
+    pub trade_count: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSFuturesBookTicker {
     /// 事件类型
     #[serde(rename = "e")]
     pub event_type: String,
@@ -329,6 +400,27 @@ pub struct WSBookTicker {
     /// 买单最优挂单价格
     #[serde(rename = "A", deserialize_with = "string_as_f64")]
     pub sell_amount: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSSpotBookTicker {
+    #[serde(rename = "u")]
+    pub update_id: usize,
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// 最高买单价
+    #[serde(rename = "b", deserialize_with = "string_as_f64")]
+    pub highest_price: f64,
+    /// 最高买单价单的挂单量
+    #[serde(rename = "B", deserialize_with = "string_as_f64")]
+    pub highest_qty: f64,
+    /// 最低买单价
+    #[serde(rename = "a", deserialize_with = "string_as_f64")]
+    pub lowest_price: f64,
+    /// 最低买单价单的挂单量
+    #[serde(rename = "A", deserialize_with = "string_as_f64")]
+    pub lowest_qty: f64,
 }
 
 #[derive(Debug, Deserialize)]

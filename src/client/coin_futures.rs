@@ -615,7 +615,7 @@ impl DFuturesWSClient {
     pub fn symbol_ticker(
         &self,
         symbol: String,
-    ) -> BianResult<impl WebsocketResponse<response::WSTicker>> {
+    ) -> BianResult<impl WebsocketResponse<response::WSFuturesTicker>> {
         self.build_single(symbol, "ticker")
     }
 
@@ -625,7 +625,7 @@ impl DFuturesWSClient {
     pub fn symbol_ticker_multi(
         &self,
         symbols: Vec<String>,
-    ) -> BianResult<impl WebsocketResponse<response::WSTicker>> {
+    ) -> BianResult<impl WebsocketResponse<response::WSFuturesTicker>> {
         self.build_multi(symbols, "ticker")
     }
 
@@ -633,7 +633,7 @@ impl DFuturesWSClient {
     ///
     /// 所有symbol 24小时完整ticker信息.需要注意的是，只有发生变化的ticker更新才会被推送。
     /// Update Speed: 1000ms
-    pub fn all_symbol_ticker(&self) -> BianResult<impl WebsocketResponse<Vec<response::WSTicker>>> {
+    pub fn all_symbol_ticker(&self) -> BianResult<impl WebsocketResponse<Vec<response::WSFuturesTicker>>> {
         self.build_single(String::new(), "!ticker@arr")
     }
 
@@ -643,7 +643,7 @@ impl DFuturesWSClient {
     pub fn book_ticker(
         &self,
         symbol: String,
-    ) -> BianResult<impl WebsocketResponse<response::WSBookTicker>> {
+    ) -> BianResult<impl WebsocketResponse<response::WSFuturesBookTicker>> {
         self.build_single(symbol, "bookTicker")
     }
 
@@ -653,14 +653,14 @@ impl DFuturesWSClient {
     pub fn book_ticker_multi(
         &self,
         symbols: Vec<String>,
-    ) -> BianResult<impl WebsocketResponse<response::WSBookTicker>> {
+    ) -> BianResult<impl WebsocketResponse<response::WSFuturesBookTicker>> {
         self.build_multi(symbols, "bookTicker")
     }
 
     /// 全市场最优挂单信息
     ///
     ///所有交易对交易对最优挂单信息
-    pub fn all_book_ticker(&self) -> BianResult<impl WebsocketResponse<response::WSBookTicker>> {
+    pub fn all_book_ticker(&self) -> BianResult<impl WebsocketResponse<response::WSFuturesBookTicker>> {
         self.build_single(String::new(), "!bookTicker")
     }
 

@@ -134,7 +134,7 @@ fn test_ws_ticker() {
     let client = init_client();
     let mut stream = client.symbol_ticker("ethusdt".to_string()).unwrap();
     for _ in 0..10 {
-        let msg: response::WSTicker = stream.read_stream_single().unwrap();
+        let msg: response::WSFuturesTicker = stream.read_stream_single().unwrap();
         dbg!(msg);
     }
     stream.close_stream();
@@ -143,7 +143,7 @@ fn test_ws_ticker() {
         .symbol_ticker_multi(vec!["btcusdt".to_string(), "ethusdt".to_string()])
         .unwrap();
     for _ in 0..20 {
-        let msg: response::WSTicker = stream.read_stream_multi().unwrap();
+        let msg: response::WSFuturesTicker = stream.read_stream_multi().unwrap();
         dbg!(msg);
     }
     stream.close_stream();

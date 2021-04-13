@@ -354,7 +354,7 @@ impl SpotWSClient {
     pub fn symbol_ticker(
         &self,
         symbol: String,
-    ) -> BianResult<impl WebsocketResponse<response::WSTicker>> {
+    ) -> BianResult<impl WebsocketResponse<response::WSSpotTicker>> {
         self.build_single(symbol, "ticker")
     }
 
@@ -364,7 +364,7 @@ impl SpotWSClient {
     pub fn symbol_ticker_multi(
         &self,
         symbols: Vec<String>,
-    ) -> BianResult<impl WebsocketResponse<response::WSTicker>> {
+    ) -> BianResult<impl WebsocketResponse<response::WSSpotTicker>> {
         self.build_multi(symbols, "ticker")
     }
 
@@ -372,7 +372,38 @@ impl SpotWSClient {
     ///
     /// 所有symbol 24小时完整ticker信息.需要注意的是，只有发生变化的ticker更新才会被推送。
     /// Update Speed: 1000ms
-    pub fn all_symbol_ticker(&self) -> BianResult<impl WebsocketResponse<Vec<response::WSTicker>>> {
+    pub fn all_symbol_ticker(
+        &self,
+    ) -> BianResult<impl WebsocketResponse<Vec<response::WSSpotTicker>>> {
         self.build_single(String::new(), "!ticker@arr")
+    }
+
+    /// 按Symbol的最优挂单信息
+    ///
+    /// 实时推送指定交易对最优挂单信息 Update Speed: 实时
+    pub fn book_ticker(
+        &self,
+        symbol: String,
+    ) -> BianResult<impl WebsocketResponse<response::WSSpotBookTicker>> {
+        self.build_single(symbol, "bookTicker")
+    }
+
+    /// 按Symbol的最优挂单信息
+    ///
+    /// 实时推送指定交易对最优挂单信息 Update Speed: 实时
+    pub fn book_ticker_multi(
+        &self,
+        symbols: Vec<String>,
+    ) -> BianResult<impl WebsocketResponse<response::WSSpotBookTicker>> {
+        self.build_multi(symbols, "bookTicker")
+    }
+
+    /// 全市场最优挂单信息
+    ///
+    ///所有交易对交易对最优挂单信息
+    pub fn all_book_ticker(
+        &self,
+    ) -> BianResult<impl WebsocketResponse<response::WSSpotBookTicker>> {
+        self.build_single(String::new(), "!bookTicker")
     }
 }
