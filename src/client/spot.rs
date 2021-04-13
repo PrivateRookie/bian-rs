@@ -1,8 +1,18 @@
-use crate::error::{APIError, BianResult};
+use std::net::SocketAddr;
+
+use crate::{
+    enums::Interval,
+    error::{APIError, BianResult},
+    response::WebsocketResponse,
+};
 use crate::{params, response};
 use bian_proc::api;
 use hmac::{Hmac, Mac, NewMac};
 use sha2::Sha256;
+use tungstenite::{
+    client::{connect_with_config, AutoGenericStream},
+    WebSocket,
+};
 
 /// 现货账户客户端
 pub struct SpotHttpClient {
@@ -203,5 +213,166 @@ impl SpotHttpClient {
         &self,
         param: params::PUserTrade,
     ) -> BianResult<Vec<response::UserSpotTrade>> {
+    }
+}
+
+/// 现货 websocket 客户端
+pub struct SpotWSClient {
+    pub proxy: Option<SocketAddr>,
+    pub base_url: url::Url,
+}
+
+impl SpotWSClient {
+    fn build_single(
+        &self,
+        symbol: String,
+        channel: &str,
+    ) -> BianResult<WebSocket<AutoGenericStream>> {
+        let url = if symbol.is_empty() {
+            self.base_url.join(&format!("ws/{}", channel)).unwrap()
+        } else {
+            self.base_url
+                .join(&format!("ws/{}@{}", symbol, channel))
+                .unwrap()
+        };
+        let (socket, _) = connect_with_config(url, None, 3, self.proxy)
+            .map_err(|e| APIError::WSConnectError(e.to_string()))?;
+        Ok(socket)
+    }
+
+    fn build_multi(
+        &self,
+        symbols: Vec<String>,
+        channel: &str,
+    ) -> BianResult<WebSocket<AutoGenericStream>> {
+        let streams = symbols
+            .iter()
+            .map(|sym| format!("{}@{}", sym, channel))
+            .collect::<Vec<String>>()
+            .join("/");
+        let url = self
+            .base_url
+            .join(&format!("stream/?streams={}", streams))
+            .unwrap();
+        let (socket, _) = connect_with_config(url, None, 3, self.proxy)
+            .map_err(|e| APIError::WSConnectError(e.to_string()))?;
+        Ok(socket)
+    }
+}
+
+/// 行情
+impl SpotWSClient {
+    /// 归集交易 stream 推送交易信息，是对单一订单的集合.
+    pub fn agg_trade(
+        &self,
+        symbol: String,
+    ) -> BianResult<impl WebsocketResponse<response::WSAggTrade>> {
+        self.build_single(symbol, "aggTrade")
+    }
+
+    /// 归集交易 stream 推送交易信息，是对单一订单的集合.
+    pub fn agg_trade_multi(
+        &self,
+        symbols: Vec<String>,
+    ) -> BianResult<impl WebsocketResponse<response::WSAggTrade>> {
+        self.build_multi(symbols, "aggTrade")
+    }
+
+    /// 逐笔交易
+    pub fn trade(&self, symbol: String) -> BianResult<impl WebsocketResponse<response::WSTrade>> {
+        self.build_single(symbol, "trade")
+    }
+
+    /// 逐笔交易
+    pub fn trade_multi(
+        &self,
+        symbols: Vec<String>,
+    ) -> BianResult<impl WebsocketResponse<response::WSTrade>> {
+        self.build_multi(symbols, "trade")
+    }
+
+    // K线
+    ///
+    /// K线stream逐秒推送所请求的K线种类(最新一根K线)的更新。推送间隔2000毫秒(如有刷新)
+    pub fn kline(
+        &self,
+        symbol: String,
+        interval: Interval,
+    ) -> BianResult<impl WebsocketResponse<response::WSKline>> {
+        let channel = format!("kline_{}", interval.to_string());
+        dbg!(&channel);
+        self.build_single(symbol, &channel)
+    }
+
+    /// K线
+    ///
+    /// K线stream逐秒推送所请求的K线种类(最新一根K线)的更新。推送间隔2000毫秒(如有刷新)
+    pub fn kline_multi(
+        &self,
+        symbols: Vec<String>,
+        interval: Interval,
+    ) -> BianResult<impl WebsocketResponse<response::WSKline>> {
+        let channel = format!("kline_{}", interval.to_string());
+        dbg!(&channel);
+        self.build_multi(symbols, &channel)
+    }
+
+    /// 按 symbol 的精简 Ticker
+    ///
+    /// Update Speed: 1000ms
+    pub fn mini_ticker(
+        &self,
+        symbol: String,
+    ) -> BianResult<impl WebsocketResponse<response::WSMiniTicker>> {
+        self.build_single(symbol, "miniTicker")
+    }
+
+    /// 按 symbol 的精简 Ticker
+    ///
+    /// Update Speed: 1000ms
+    pub fn mini_ticker_multi(
+        &self,
+        symbols: Vec<String>,
+    ) -> BianResult<impl WebsocketResponse<response::WSMiniTicker>> {
+        self.build_multi(symbols, "miniTicker")
+    }
+
+    /// 全市场的精简 Ticker
+    ///
+    /// 所有symbol24小时精简ticker信息.需要注意的是，只有发生变化的ticker更新才会被推送。
+    /// Update Speed: 1000ms
+    pub fn all_mini_ticker(
+        &self,
+    ) -> BianResult<impl WebsocketResponse<Vec<response::WSMiniTicker>>> {
+        self.build_single(String::new(), "!miniTicker@arr")
+    }
+
+    // TODO fix ticker field
+    /// 按Symbol刷新的24小时完整ticker信息
+    ///
+    /// Update Speed: 1000ms
+    pub fn symbol_ticker(
+        &self,
+        symbol: String,
+    ) -> BianResult<impl WebsocketResponse<response::WSTicker>> {
+        self.build_single(symbol, "ticker")
+    }
+
+    /// 按Symbol刷新的24小时完整ticker信息
+    ///
+    /// Update Speed: 1000ms
+    pub fn symbol_ticker_multi(
+        &self,
+        symbols: Vec<String>,
+    ) -> BianResult<impl WebsocketResponse<response::WSTicker>> {
+        self.build_multi(symbols, "ticker")
+    }
+
+    /// 全市场的完整Ticker
+    ///
+    /// 所有symbol 24小时完整ticker信息.需要注意的是，只有发生变化的ticker更新才会被推送。
+    /// Update Speed: 1000ms
+    pub fn all_symbol_ticker(&self) -> BianResult<impl WebsocketResponse<Vec<response::WSTicker>>> {
+        self.build_single(String::new(), "!ticker@arr")
     }
 }

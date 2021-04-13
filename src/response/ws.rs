@@ -2,7 +2,7 @@ use std::usize;
 
 use super::{string_as_f64, string_as_usize};
 use crate::enums::{
-    ContractType, Interval, MarginType, OrderSide, OrderStatus, FuturesOrderType, PositionDirect,
+    ContractType, FuturesOrderType, Interval, MarginType, OrderSide, OrderStatus, PositionDirect,
     TimeInForce,
 };
 use crate::error::{APIError, BianResult};
@@ -59,8 +59,40 @@ pub struct WSAggTrade {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct WSTrade {
+    /// 事件类型 trade
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 交易对
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// 成交价格
+    #[serde(rename = "p", deserialize_with = "string_as_f64")]
+    pub price: f64,
+    /// 成交笔数
+    #[serde(rename = "q", deserialize_with = "string_as_f64")]
+    pub qty: f64,
+    /// 买房的订单ID
+    #[serde(rename = "b")]
+    pub buyer_order_id: usize,
+    /// 卖房的订单ID
+    #[serde(rename = "b")]
+    pub seller_order_id: usize,
+    /// 成交时间
+    #[serde(rename = "T")]
+    pub trade_time: i64,
+    /// 买方是否是做市方。如true，则此次成交是一个主动卖出单，否则是一个主动买入单。
+    #[serde(rename = "m")]
+    pub is_market: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct WSPrice {
-    /// 事件类型 aggTrade
+    /// 事件类型 price
     #[serde(rename = "e")]
     pub event_type: String,
     /// 事件时间
@@ -89,7 +121,7 @@ pub struct WSPrice {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WSKline {
-    /// 事件类型 aggTrade
+    /// 事件类型 kline
     #[serde(rename = "e")]
     pub event_type: String,
     /// 事件时间
@@ -106,7 +138,7 @@ pub struct WSKline {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WSContinuousKline {
-    /// 事件类型 aggTrade
+    /// 事件类型 continuous_kline
     #[serde(rename = "e")]
     pub event_type: String,
     /// 事件时间
@@ -182,7 +214,7 @@ pub struct KData {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WSMiniTicker {
-    /// 事件类型
+    /// 事件类型 24hrMiniTicker
     #[serde(rename = "e")]
     pub event_type: String,
     /// 事件时间(ms)
@@ -214,7 +246,7 @@ pub struct WSMiniTicker {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WSTicker {
-    /// 事件类型
+    /// 事件类型 24hrTicker
     #[serde(rename = "e")]
     pub event_type: String,
     /// 事件时间
