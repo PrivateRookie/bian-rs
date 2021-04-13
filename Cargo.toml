@@ -1,6 +1,6 @@
 [package]
 name = "bian-rs"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["PrivateRookie <996514515@qq.com>"]
 edition = "2018"
 description = "币安 Rust async SDK | binance Rust async SDK"
@@ -27,7 +27,7 @@ dotenv = "0.15.0"
 hex = "0.4.3"
 sha2 = "0.9.3"
 chrono = { version = "0.4", features = ["serde"] }
-bian-proc = { version = "0.1", path = "./bian-proc" }
+bian-proc = { version = "0.2.0", path = "./bian-proc" }
 tungstenite = { git = "https://github.com/PrivateRookie/tungstenite-rs.git", branch = "proxy", version = "0.13" }
 thiserror = "1"
 log = "0.4.14"
