@@ -322,6 +322,51 @@ pub struct PQuerySpotOrder {
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct PQueryAllSpotOrder {
+    pub symbol: String,
+    pub order_id: Option<usize>,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+    pub limit: Option<usize>,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PCancelOcoOrder {
+    pub symbol: String,
+    pub order_list_id: Option<usize>,
+    pub list_client_order_id: Option<String>,
+    pub new_client_order_id: Option<String>,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PQueryOcoOrder {
+    /// orderListId 或 listClientOrderId 必须提供一个。
+    pub order_list_id: Option<usize>,
+    /// orderListId 或 listClientOrderId 必须提供一个。
+    pub orig_client_order_id: Option<String>,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PQueryAllOcoOrder {
+    pub from_id: Option<usize>,
+    pub start_time: Option<i64>,
+    pub end_time: Option<i64>,
+    pub limit: Option<usize>,
+    #[serde(flatten)]
+    pub ts: PTimestamp,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PSymbolWithTs {
     pub symbol: String,
     #[serde(flatten)]

@@ -972,6 +972,55 @@ pub enum SpotOrder {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct QuerySpotOrder {
+    /// 交易对
+    pub symbol: String,
+    /// 系统订单ID
+    pub order_id: usize,
+    /// OCO订单ID,否则为-1
+    pub order_list_id: i64,
+    /// 客户自己设置的ID
+    pub client_order_id: String,
+    /// 订单价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub price: f64,
+    /// 用户设置的原始订单数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub orig_qty: f64,
+    /// 交易的订单数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub executed_qty: f64,
+    /// 累计交易的金额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub cummulative_quote_qty: f64,
+    /// 订单状态
+    pub status: OrderStatus,
+    /// 订单的时效方式
+    pub time_in_force: TimeInForce,
+    /// 订单类型， 比如市价单，现价单等
+    #[serde(rename = "type")]
+    pub order_type: SpotOrderType,
+    /// 订单方向
+    pub side: OrderSide,
+    /// 止损价格
+    #[serde(deserialize_with = "string_as_f64")]
+    pub stop_price: f64,
+    /// 冰山数量
+    #[serde(deserialize_with = "string_as_f64")]
+    pub iceberg_qty: f64,
+    /// 订单时间
+    pub time: i64,
+    /// 最后更新时间
+    pub update_time: i64,
+    /// 订单是否出现的 order book 中
+    pub is_working: bool,
+    /// 原始交易金额
+    #[serde(deserialize_with = "string_as_f64")]
+    pub orig_quote_order_qty: f64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SpotOpOrder {
     /// 交易对
     pub symbol: String,
@@ -1006,6 +1055,13 @@ pub struct SpotOpOrder {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum CancelSpotOrder {
+    Spot(SpotOrder),
+    Oco(OcoOrder),
+}
+
+#[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase", untagged)]
 pub enum BatchOrderResponse {
     Order(FuturesOrder),
@@ -1024,6 +1080,7 @@ pub struct OcoOrder {
     pub transaction_time: i64,
     pub symbol: String,
     pub orders: Vec<OcoOrderDesc>,
+    #[serde(default)]
     pub order_reports: Vec<OcoOrderReport>,
 }
 

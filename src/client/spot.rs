@@ -120,20 +120,78 @@ impl SpotHttpClient {
     ) -> BianResult<response::SpotOpOrder> {
     }
 
-    // /// 撤销单一交易对的所有挂单
-    // ///
-    // /// 撤销单一交易对下所有挂单, 包括OCO的挂单。
-    // #[api(SDELETE "api/v3/openOrders")]
-    // pub async fn cancel_open_orders(
-    //     &self,
-    //     param: params::PSymbolWithTs,
-    // ) -> BianResult<Vec<response::SpotOpOrder>> {
-    // }
+    /// 撤销单一交易对的所有挂单
+    ///
+    /// 撤销单一交易对下所有挂单, 包括OCO的挂单。
+    #[api(SDELETE "api/v3/openOrders")]
+    pub async fn cancel_open_orders(
+        &self,
+        param: params::PSymbolWithTs,
+    ) -> BianResult<Vec<response::CancelSpotOrder>> {
+    }
+
+    /// 查询订单
+    #[api(SGET "api/v3/order")]
+    pub async fn list_order(
+        &self,
+        param: params::PQuerySpotOrder,
+    ) -> BianResult<response::QuerySpotOrder> {
+    }
+
+    /// 当前挂单
+    #[api(SGET "api/v3/openOrders")]
+    pub async fn open_orders(
+        &self,
+        param: params::POptionSymbolQuery,
+    ) -> BianResult<Vec<response::QuerySpotOrder>> {
+    }
+
+    /// 查询所有订单
+    ///
+    /// 获取所有帐户订单； 有效，已取消或已完成。
+    #[api(SGEt "api/v3/allOrders")]
+    pub async fn list_all_order(
+        &self,
+        param: params::PQueryAllSpotOrder,
+    ) -> BianResult<Vec<response::QuerySpotOrder>> {
+    }
 
     /// OCO 下单
     /// [DOC](https://binance-docs.github.io/apidocs/spot/cn/#oco-trade)
     #[api(SPOST "api/v3/order/oco")]
     pub async fn oco_order(&self, param: params::POcoOrder) -> BianResult<response::OcoOrder> {}
+
+    /// 取消 OCO 订单
+    #[api(SDELETE "api/v3/orderList")]
+    pub async fn cancel_oco_order(
+        &self,
+        param: params::PCancelOcoOrder,
+    ) -> BianResult<response::OcoOrder> {
+    }
+
+    /// 查询 OCO
+    #[api(SGET "api/v3/orderList")]
+    pub async fn list_oco_order(
+        &self,
+        param: params::PQueryOcoOrder,
+    ) -> BianResult<response::OcoOrder> {
+    }
+
+    /// 查询所有 OCO
+    #[api(SGET "api/v3/allOrderList")]
+    pub async fn list_all_oco_order(
+        &self,
+        param: params::PQueryAllOcoOrder,
+    ) -> BianResult<Vec<response::OcoOrder>> {
+    }
+
+    /// 查询 OCO 挂单
+    #[api(SGET "api/v3/openOrderList")]
+    pub async fn list_open_oco_order(
+        &self,
+        param: params::PTimestamp,
+    ) -> BianResult<Vec<response::OcoOrder>> {
+    }
 
     /// 账户信息
     #[api(SGET "api/v3/account")]
