@@ -1,4 +1,4 @@
-use std::{collections::HashMap, usize};
+use std::{collections::HashMap, fmt, usize};
 
 use crate::enums::{
     ContractType, FuturesOrderType, MarginType, OcoOrderStatus, OcoStatus, OrderSide, OrderStatus,
@@ -6,7 +6,10 @@ use crate::enums::{
 };
 
 use super::{string_as_f64, string_as_usize};
-use serde::Deserialize;
+use serde::{
+    de::{SeqAccess, Unexpected, Visitor},
+    Deserialize, Deserializer,
+};
 
 #[derive(Debug, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -343,6 +346,47 @@ pub struct SpotExchangeInfo {
     pub symbols: Vec<SpotSymbol>,
 }
 
+/// (价格, 数量)
+#[derive(Debug)]
+pub struct DepthOrder(f64, f64);
+
+impl<'de> Deserialize<'de> for DepthOrder {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_tuple(2, DepthOrderVisitor)
+    }
+}
+
+struct DepthOrderVisitor;
+
+impl<'de> Visitor<'de> for DepthOrderVisitor {
+    type Value = DepthOrder;
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a tuple of (String, String)")
+    }
+
+    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+    where
+        A: SeqAccess<'de>,
+    {
+        let first: &'de str = seq
+            .next_element()?
+            .ok_or_else(|| serde::de::Error::invalid_value(Unexpected::Option, &"first element"))?;
+        let first_val = first.parse::<f64>().map_err(|_| {
+            serde::de::Error::invalid_value(Unexpected::Str(first), &"first element")
+        })?;
+        let second: &'de str = seq
+            .next_element()?
+            .ok_or_else(|| serde::de::Error::invalid_value(Unexpected::Option, &"first element"))?;
+        let second_val = second.parse::<f64>().map_err(|_| {
+            serde::de::Error::invalid_value(Unexpected::Str(second), &"first element")
+        })?;
+        Ok(DepthOrder(first_val, second_val))
+    }
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FuturesDepth {
@@ -353,22 +397,20 @@ pub struct FuturesDepth {
     /// 撮合引擎时间
     #[serde(rename = "T")]
     pub t: usize,
-    // TODO convert string to float
     /// 买单
-    pub bids: Vec<(String, String)>,
+    pub bids: Vec<DepthOrder>,
     /// 卖单
-    pub asks: Vec<(String, String)>,
+    pub asks: Vec<DepthOrder>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SpotDepth {
     pub last_update_id: usize,
-    // TODO convert string to float
     /// 买单
-    pub bids: Vec<(String, String)>,
+    pub bids: Vec<DepthOrder>,
     /// 卖单
-    pub asks: Vec<(String, String)>,
+    pub asks: Vec<DepthOrder>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -471,23 +513,94 @@ pub struct AggTrade {
     pub m: bool,
 }
 
-// TODO make it to map
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Kline(
-    i64,
-    String,
-    String,
-    String,
-    String,
-    String,
-    i64,
-    String,
-    usize,
-    String,
-    String,
-    String,
-);
+#[derive(Debug)]
+pub struct Kline {
+    pub open_time: i64,
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub close_time: i64,
+    pub count: usize,
+}
+
+impl<'de> Deserialize<'de> for Kline {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_tuple(12, KlineVisitor)
+    }
+}
+
+struct KlineVisitor;
+
+impl<'de> Visitor<'de> for KlineVisitor {
+    type Value = Kline;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a tuple of (i64, String, String, String, String, String, i64, String, usize, String, String, String)")
+    }
+
+    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+    where
+        A: SeqAccess<'de>,
+    {
+        let open_time: i64 = seq.next_element()?.ok_or_else(|| {
+            serde::de::Error::invalid_value(Unexpected::Option, &"expect open time")
+        })?;
+        let open_str: &'de str = seq
+            .next_element()?
+            .ok_or_else(|| serde::de::Error::invalid_value(Unexpected::Option, &"open price"))?;
+        let open = open_str.parse::<f64>().map_err(|_| {
+            serde::de::Error::invalid_value(Unexpected::Str(open_str), &"f64 string")
+        })?;
+        let high_str: &'de str = seq
+            .next_element()?
+            .ok_or_else(|| serde::de::Error::invalid_value(Unexpected::Option, &"highest price"))?;
+        let high = high_str.parse::<f64>().map_err(|_| {
+            serde::de::Error::invalid_value(Unexpected::Str(high_str), &"f64 string")
+        })?;
+        let low_str: &'de str = seq
+            .next_element()?
+            .ok_or_else(|| serde::de::Error::invalid_value(Unexpected::Option, &"lowest price"))?;
+        let low = low_str.parse::<f64>().map_err(|_| {
+            serde::de::Error::invalid_value(Unexpected::Str(low_str), &"f64 string")
+        })?;
+        let close_str: &'de str = seq
+            .next_element()?
+            .ok_or_else(|| serde::de::Error::invalid_value(Unexpected::Option, &"close price"))?;
+        let close = close_str.parse::<f64>().map_err(|_| {
+            serde::de::Error::invalid_value(Unexpected::Str(close_str), &"f64 string")
+        })?;
+        seq.next_element::<&'de str>()?.ok_or_else(|| {
+            serde::de::Error::invalid_value(Unexpected::Option, &"expect ignored padded field")
+        })?;
+        let close_time: i64 = seq.next_element()?.ok_or_else(|| {
+            serde::de::Error::invalid_value(Unexpected::Option, &"expect close time")
+        })?;
+        seq.next_element::<&'de str>()?.ok_or_else(|| {
+            serde::de::Error::invalid_value(Unexpected::Option, &"expect ignored padded field")
+        })?;
+        let count: usize = seq.next_element()?.ok_or_else(|| {
+            serde::de::Error::invalid_value(Unexpected::Option, &"expect close time")
+        })?;
+        for _ in 0..3 {
+            seq.next_element::<&'de str>()?.ok_or_else(|| {
+                serde::de::Error::invalid_value(Unexpected::Option, &"expect ignored padded field")
+            })?;
+        }
+        Ok(Kline {
+            open_time,
+            open,
+            high,
+            low,
+            close,
+            close_time,
+            count,
+        })
+    }
+}
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]

@@ -347,7 +347,6 @@ impl SpotWSClient {
         self.build_single(String::new(), "!miniTicker@arr")
     }
 
-    // TODO fix ticker field
     /// 按Symbol刷新的24小时完整ticker信息
     ///
     /// Update Speed: 1000ms

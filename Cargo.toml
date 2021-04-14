@@ -13,7 +13,7 @@ keywords = ["Binance", "bitcoin", "websocket", "proxy"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dev-dependencies]
-bian-proc = { version = "0.1", path = "./bian-proc" }
+bian-proc = { version = "0.2", path = "./bian-proc" }
 
 [dependencies]
 tokio = { version = "1.2.0", features = ["full"] }
