@@ -439,7 +439,7 @@ impl DFuturesWSClient {
             .join("/");
         let url = self
             .base_url
-            .join(&format!("stream/?streams={}", streams))
+            .join(&format!("stream?streams={}", streams))
             .unwrap();
         let (socket, _) = connect_with_config(url, None, 3, self.proxy)
             .map_err(|e| APIError::WSConnectError(e.to_string()))?;
