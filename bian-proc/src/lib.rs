@@ -74,7 +74,7 @@ pub fn api(attr: TokenStream, item: TokenStream) -> TokenStream {
         #sign_block
 
         let url = if qs.is_empty() { url.to_string() } else { format!("{}?{}", url, qs) };
-
+        log::debug!("req {}", &url);
         let resp = self
         .http_client
         .#http_method(&url)
@@ -83,7 +83,8 @@ pub fn api(attr: TokenStream, item: TokenStream) -> TokenStream {
         .send()
         .await?;
         let resp =APIError::check_resp(resp).await?;
-        let resp_text = dbg!(resp.text().await.unwrap());
+        let resp_text = resp.text().await.unwrap();
+        log::debug!("resp {}", &resp_text);
         let json_resp = serde_json::from_str(&resp_text)
         .map_err(|e| crate::error::APIError::DecodeError(e.to_string()))?;
         Ok(json_resp)
