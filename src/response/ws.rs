@@ -1,6 +1,6 @@
 use std::usize;
 
-use super::{string_as_f64, string_as_usize};
+use super::{string_as_f64, string_as_usize, DepthOrder};
 use crate::enums::{
     ContractType, FuturesOrderType, Interval, MarginType, OrderSide, OrderStatus, PositionDirect,
     TimeInForce,
@@ -477,7 +477,7 @@ pub struct OrderData {
 /// 有限档深度信息
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct WSDepth {
+pub struct WSFuturesDepth {
     /// 事件类型
     #[serde(rename = "e")]
     pub event_type: String,
@@ -500,10 +500,47 @@ pub struct WSDepth {
     pub pu: usize,
     /// 买方
     #[serde(rename = "b")]
-    pub buy: Vec<(String, String)>,
+    pub buy: Vec<DepthOrder>,
     /// 卖方
     #[serde(rename = "a")]
-    pub sell: Vec<(String, String)>,
+    pub sell: Vec<DepthOrder>,
+}
+
+/// 有限档深度信息
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSSpotDepth {
+    /// 更新ID
+    pub last_update_id: usize,
+    /// 卖方
+    pub asks: Vec<DepthOrder>,
+    /// 买方
+    pub bids: Vec<DepthOrder>,
+}
+
+/// 增量深度信息
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WSSpotIncrementDepth {
+    /// 事件类型
+    #[serde(rename = "e")]
+    pub event_type: String,
+    /// 事件推送时间
+    #[serde(rename = "E")]
+    pub event_time: i64,
+    /// 交易对
+    #[serde(rename = "s")]
+    pub symbol: String,
+    /// 从上次推送至今新增的最后一个 update Id
+    #[serde(rename = "u")]
+    pub update_id: usize,
+    /// 从上次推送至今新增的第一个 update Id
+    #[serde(rename = "U")]
+    pub upper_u: usize,
+    #[serde(rename = "b")]
+    pub bids: Vec<DepthOrder>,
+    #[serde(rename = "a")]
+    pub asks: Vec<DepthOrder>,
 }
 
 #[derive(Debug, Deserialize)]

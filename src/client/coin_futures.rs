@@ -700,7 +700,7 @@ impl DFuturesWSClient {
         symbol: String,
         level: usize,
         freq: usize,
-    ) -> BianResult<impl WebsocketResponse<response::WSDepth>> {
+    ) -> BianResult<impl WebsocketResponse<response::WSFuturesDepth>> {
         let level = match level {
             10 => 10,
             20 => 20,
@@ -723,7 +723,7 @@ impl DFuturesWSClient {
         symbols: Vec<String>,
         level: usize,
         freq: usize,
-    ) -> BianResult<impl WebsocketResponse<response::WSDepth>> {
+    ) -> BianResult<impl WebsocketResponse<response::WSFuturesDepth>> {
         let level = match level {
             10 => 10,
             20 => 20,

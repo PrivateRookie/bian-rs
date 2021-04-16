@@ -348,7 +348,7 @@ pub struct SpotExchangeInfo {
 
 /// (价格, 数量)
 #[derive(Debug)]
-pub struct DepthOrder(f64, f64);
+pub struct DepthOrder(pub f64, pub f64);
 
 impl<'de> Deserialize<'de> for DepthOrder {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>

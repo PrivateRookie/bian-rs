@@ -405,4 +405,76 @@ impl SpotWSClient {
     ) -> BianResult<impl WebsocketResponse<response::WSSpotBookTicker>> {
         self.build_single(String::new(), "!bookTicker")
     }
+
+    /// 有限档深度信息
+    ///
+    /// 每秒或每100毫秒推送有限档深度信息。levels表示几档买卖单信息, 可选 5/10/20档
+    pub fn limit_depth(
+        &self,
+        symbol: String,
+        level: usize,
+        freq: usize,
+    ) -> BianResult<impl WebsocketResponse<response::WSSpotDepth>> {
+        let level = match level {
+            10 => 10,
+            20 => 20,
+            _ => 5,
+        };
+        let channel = match freq {
+            100 => format!("depth{}@100ms", level),
+            _ => format!("depth{}", level),
+        };
+        self.build_single(symbol, &channel)
+    }
+
+    /// 有限档深度信息
+    ///
+    /// 每秒或每100毫秒推送有限档深度信息。levels表示几档买卖单信息, 可选 5/10/20档
+    pub fn limit_depth_multi(
+        &self,
+        symbols: Vec<String>,
+        level: usize,
+        freq: usize,
+    ) -> BianResult<impl WebsocketResponse<response::WSSpotDepth>> {
+        let level = match level {
+            10 => 10,
+            20 => 20,
+            _ => 5,
+        };
+        let channel = match freq {
+            100 => format!("depth{}@100ms", level),
+            _ => format!("depth{}", level),
+        };
+        self.build_multi(symbols, &channel)
+    }
+
+    /// 增量深度信息
+    ///
+    /// 每秒或每100毫秒推送有限档深度信息。levels表示几档买卖单信息, 可选 5/10/20档
+    pub fn incr_depth(
+        &self,
+        symbol: String,
+        freq: usize,
+    ) -> BianResult<impl WebsocketResponse<response::WSSpotIncrementDepth>> {
+        let channel = match freq {
+            100 => format!("depth@100ms"),
+            _ => format!("depth"),
+        };
+        self.build_single(symbol, &channel)
+    }
+
+    /// 增量深度信息
+    ///
+    /// 每秒或每100毫秒推送有限档深度信息。levels表示几档买卖单信息, 可选 5/10/20档
+    pub fn incr_depth_multi(
+        &self,
+        symbols: Vec<String>,
+        freq: usize,
+    ) -> BianResult<impl WebsocketResponse<response::WSSpotIncrementDepth>> {
+        let channel = match freq {
+            100 => format!("depth@100ms"),
+            _ => format!("depth"),
+        };
+        self.build_multi(symbols, &channel)
+    }
 }
