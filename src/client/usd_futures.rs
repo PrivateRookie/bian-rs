@@ -11,6 +11,10 @@ use tungstenite::{
     client::{connect_with_config, AutoGenericStream},
     WebSocket,
 };
+
+const BASE_HTTP_URL: &str = "https://dapi.binance.com";
+const BASE_WS_URL: &str = "wss://dstream.binance.com";
+
 /// U 本位合约 http 客户端
 /// [doc](https://binance-docs.github.io/apidocs/futures/cn/#185368440e)
 pub struct UFuturesHttpClient {
@@ -21,14 +25,28 @@ pub struct UFuturesHttpClient {
 }
 
 impl UFuturesHttpClient {
-    pub fn new(api_key: &str, secret_key: &str, base_url: &str) -> Self {
+    /// create client from default endpoint url
+    pub fn default_endpoint(api_key: String, secret_key: String) -> Self {
+        let base_url = url::Url::parse(BASE_HTTP_URL).unwrap();
         let http_client = reqwest::Client::new();
         Self {
+            base_url,
+            api_key,
+            secret_key,
+            http_client,
+        }
+    }
+
+    pub fn new(api_key: String, secret_key: String, base_url: &str) -> BianResult<Self> {
+        let http_client = reqwest::Client::new();
+        let base_url = url::Url::parse(base_url)
+            .map_err(|_| crate::error::APIError::InvalidUrl(base_url.to_string()))?;
+        Ok(Self {
             http_client,
             api_key: api_key.to_string(),
             secret_key: secret_key.to_string(),
-            base_url: url::Url::parse(base_url).unwrap(),
-        }
+            base_url,
+        })
     }
 
     fn sign<P: serde::Serialize>(&self, params: &P) -> String {
@@ -416,6 +434,12 @@ pub struct UFuturesWSClient {
 }
 
 impl UFuturesWSClient {
+    /// create client from default endpoint url
+    pub fn default_endpoint(proxy: Option<SocketAddr>) -> Self {
+        let base_url = url::Url::parse(BASE_WS_URL).unwrap();
+        Self { base_url, proxy }
+    }
+
     fn build_single(
         &self,
         symbol: String,
@@ -639,7 +663,9 @@ impl UFuturesWSClient {
     ///
     /// 所有symbol 24小时完整ticker信息.需要注意的是，只有发生变化的ticker更新才会被推送。
     /// Update Speed: 1000ms
-    pub fn all_symbol_ticker(&self) -> BianResult<impl WebsocketResponse<Vec<response::WSFuturesTicker>>> {
+    pub fn all_symbol_ticker(
+        &self,
+    ) -> BianResult<impl WebsocketResponse<Vec<response::WSFuturesTicker>>> {
         self.build_single(String::new(), "!ticker@arr")
     }
 
@@ -666,7 +692,9 @@ impl UFuturesWSClient {
     /// 全市场最优挂单信息
     ///
     ///所有交易对交易对最优挂单信息
-    pub fn all_book_ticker(&self) -> BianResult<impl WebsocketResponse<response::WSFuturesBookTicker>> {
+    pub fn all_book_ticker(
+        &self,
+    ) -> BianResult<impl WebsocketResponse<response::WSFuturesBookTicker>> {
         self.build_single(String::new(), "!bookTicker")
     }
 

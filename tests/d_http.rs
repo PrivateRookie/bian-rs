@@ -3,13 +3,12 @@ use bian_rs::enums::{self, *};
 use bian_rs::params;
 
 use std::env;
-const BASE_URL: &str = "https://dapi.binance.com/";
 
 fn init_client() -> DFuturesHttpClient {
     dotenv::dotenv().unwrap();
     let api_key = env::var("API_KEY").expect("can not find API_KEY env variable");
     let secret_key = env::var("SECRET_KEY").expect("can not find SECRET_KEY env variable");
-    DFuturesHttpClient::new(&api_key, &secret_key, BASE_URL)
+    DFuturesHttpClient::default_endpoint(api_key, secret_key)
 }
 
 #[tokio::test]

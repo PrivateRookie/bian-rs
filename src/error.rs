@@ -20,6 +20,8 @@ pub enum APIError {
     WSClientError(String),
     #[error("ws connect error {0}")]
     WSConnectError(String),
+    #[error("invalid url {0}")]
+    InvalidUrl(String),
     #[error("unknown {0}")]
     Unknown(String),
 }

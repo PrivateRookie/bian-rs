@@ -14,6 +14,9 @@ use tungstenite::{
     WebSocket,
 };
 
+const BASE_HTTP_URL: &str = "https://api.binance.com";
+const BASE_WS_URL: &str = "wss://stream.binance.com:9443";
+
 /// 现货账户客户端
 pub struct SpotHttpClient {
     http_client: reqwest::Client,
@@ -23,14 +26,28 @@ pub struct SpotHttpClient {
 }
 
 impl SpotHttpClient {
-    pub fn new(api_key: &str, secret_key: &str, base_url: &str) -> Self {
+    /// create client from default endpoint url
+    pub fn default_endpoint(api_key: String, secret_key: String) -> Self {
+        let base_url = url::Url::parse(BASE_HTTP_URL).unwrap();
         let http_client = reqwest::Client::new();
         Self {
+            base_url,
+            api_key,
+            secret_key,
             http_client,
-            api_key: api_key.to_string(),
-            secret_key: secret_key.to_string(),
-            base_url: url::Url::parse(base_url).unwrap(),
         }
+    }
+
+    pub fn new(api_key: String, secret_key: String, base_url: &str) -> BianResult<Self> {
+        let http_client = reqwest::Client::new();
+        let base_url = url::Url::parse(base_url)
+            .map_err(|_| crate::error::APIError::InvalidUrl(base_url.to_string()))?;
+        Ok(Self {
+            http_client,
+            api_key,
+            secret_key,
+            base_url,
+        })
     }
 
     fn sign<P: serde::Serialize>(&self, params: &P) -> String {
@@ -223,6 +240,12 @@ pub struct SpotWSClient {
 }
 
 impl SpotWSClient {
+    /// create client from default endpoint url
+    pub fn default_endpoint(proxy: Option<SocketAddr>) -> Self {
+        let base_url = url::Url::parse(BASE_WS_URL).unwrap();
+        Self { base_url, proxy }
+    }
+
     fn build_single(
         &self,
         symbol: String,

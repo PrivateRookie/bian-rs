@@ -6,14 +6,13 @@ use bian_rs::{
 };
 
 use std::env;
-const BASE_URL: &str = "https://api.binance.com/";
 
 fn init_client() -> SpotHttpClient {
     dotenv::dotenv().unwrap();
     pretty_env_logger::init();
     let api_key = env::var("API_KEY").expect("can not find API_KEY env variable");
     let secret_key = env::var("SECRET_KEY").expect("can not find SECRET_KEY env variable");
-    SpotHttpClient::new(&api_key, &secret_key, BASE_URL)
+    SpotHttpClient::default_endpoint(api_key, secret_key)
 }
 
 #[tokio::test]
