@@ -32,9 +32,8 @@ use std::env;
 async fn main() {
     let api_key = "your api key";
     let secret_key = "your secret key";
-    // 注意末尾的 "/" 必不可少
-    let base_url = "https://fapi.binance.com/";
-    let client = UFuturesHttpClient::new(api_key, secret_key, base_url);
+    // 默认 endpoint
+    let client = UFuturesHttpClient::default_endpoint(api_key.to_string(), secret_key.to_string());
     // 测试是否连通
     client.ping().await.unwrap();
 }
@@ -48,8 +47,7 @@ fn init_client() -> UFuturesWSClient {
     dotenv::dotenv().unwrap();
     let proxy = env::var("WS_PROXY").expect("cant not find WS_PROXY env variable");
     let proxy = Some(proxy.to_socket_addrs().unwrap().next().unwrap());
-    let base_url = url::Url::parse(BASE_URL).unwrap();
-    UFuturesWSClient { proxy, base_url }
+    UFuturesWSClient::default_endpoint(proxy, base_url)
 }
 
 #[test]

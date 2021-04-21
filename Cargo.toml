@@ -15,9 +15,9 @@ keywords = ["Binance", "bitcoin", "websocket", "proxy"]
 [dev-dependencies]
 bian-proc = { version = "0.2", path = "./bian-proc" }
 pretty_env_logger = "0.4.0"
+tokio = { version = "1.2.0", features = ["full"] }
 
 [dependencies]
-tokio = { version = "1.2.0", features = ["full"] }
 reqwest = { version = "0.11.1", features = ["json"] }
 hmac = "0.10.1"
 serde = { version = "1.0.123", features = ["derive"] }
@@ -32,6 +32,7 @@ bian-proc = { version = "0.2.0", path = "./bian-proc" }
 tungstenite = { git = "https://github.com/PrivateRookie/tungstenite-rs.git", branch = "proxy", version = "0.13" }
 thiserror = "1"
 log = "0.4.14"
+
 
 [workspace]
 members = [".", "./bian-proc"]
