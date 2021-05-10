@@ -18,6 +18,7 @@ const BASE_HTTP_URL: &str = "https://api.binance.com";
 const BASE_WS_URL: &str = "wss://stream.binance.com:9443";
 
 /// 现货账户客户端
+#[derive(Debug, Clone)]
 pub struct SpotHttpClient {
     http_client: reqwest::Client,
     pub api_key: String,
@@ -234,6 +235,7 @@ impl SpotHttpClient {
 }
 
 /// 现货 websocket 客户端
+#[derive(Debug, Clone)]
 pub struct SpotWSClient {
     pub proxy: Option<SocketAddr>,
     pub base_url: url::Url,

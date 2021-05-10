@@ -16,6 +16,7 @@ const BASE_HTTP_URL: &str = "https://dapi.binance.com";
 const BASE_WS_URL: &str = "wss://dstream.binance.com";
 
 /// 币本位合约 http 客户端
+#[derive(Debug, Clone)]
 pub struct DFuturesHttpClient {
     http_client: reqwest::Client,
     pub api_key: String,
@@ -422,6 +423,7 @@ impl DFuturesHttpClient {
 }
 
 /// 币本位合约 websocket 客户端
+#[derive(Debug, Clone)]
 pub struct DFuturesWSClient {
     pub proxy: Option<SocketAddr>,
     pub base_url: url::Url,

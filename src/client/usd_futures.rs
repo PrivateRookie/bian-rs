@@ -17,6 +17,7 @@ const BASE_WS_URL: &str = "wss://dstream.binance.com";
 
 /// U 本位合约 http 客户端
 /// [doc](https://binance-docs.github.io/apidocs/futures/cn/#185368440e)
+#[derive(Debug, Clone)]
 pub struct UFuturesHttpClient {
     http_client: reqwest::Client,
     pub api_key: String,
@@ -428,6 +429,7 @@ impl UFuturesHttpClient {
 
 /// U 本位合约 websocket 客户端
 /// [doc](https://binance-docs.github.io/apidocs/futures/cn/#websocket)
+#[derive(Debug, Clone)]
 pub struct UFuturesWSClient {
     pub proxy: Option<SocketAddr>,
     pub base_url: url::Url,

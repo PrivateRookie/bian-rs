@@ -48,7 +48,7 @@ pub struct WSAggTrade {
     pub first_trade_id: usize,
     /// 被归集的末次交易ID
     #[serde(rename = "l")]
-    pub last: usize,
+    pub last_trade_id: usize,
     /// 成交时间
     #[serde(rename = "T")]
     pub trade_time: i64,
