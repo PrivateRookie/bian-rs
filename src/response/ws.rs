@@ -69,6 +69,9 @@ pub struct WSTrade {
     /// 交易对
     #[serde(rename = "s")]
     pub symbol: String,
+    /// 交易ID
+    #[serde(rename="t")]
+    pub transaction_id: usize,
     /// 成交价格
     #[serde(rename = "p", deserialize_with = "string_as_f64")]
     pub price: f64,
