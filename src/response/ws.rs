@@ -82,7 +82,7 @@ pub struct WSTrade {
     #[serde(rename = "b")]
     pub buyer_order_id: usize,
     /// 卖房的订单ID
-    #[serde(rename = "b")]
+    #[serde(rename = "a")]
     pub seller_order_id: usize,
     /// 成交时间
     #[serde(rename = "T")]
