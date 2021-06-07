@@ -16,7 +16,7 @@
 ```toml
 [dependencies]
 tokio = { version = "1", features = ["full"] }
-bian-rs = { git = "https://github.com/PrivateRookie/bian-rs.git" }
+bian-rs = { git = "https://github.com/PrivateRookie/bian-rs.git", branch = "main" }
 ```
 
 在国内使用需要设置代理，bian-rs 通过 `HTTP_PROXY` 和 `HTTPS_PROXY` 环境变量自动
