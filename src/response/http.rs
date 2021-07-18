@@ -186,6 +186,7 @@ pub enum SpotSymbolFilter {
     #[serde(rename = "MAX_POSITION")]
     MaxPosition {
         #[serde(deserialize_with = "string_as_f64")]
+        #[serde(rename = "maxPosition")]
         max_position: f64,
     },
     #[serde(rename = "EXCHANGE_MAX_NUM_ORDERS")]
