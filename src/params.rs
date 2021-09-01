@@ -409,7 +409,7 @@ pub struct PHistOrder {
     pub order_id: Option<usize>,
     pub start_time: Option<i64>,
     pub end_time: Option<i64>,
-    limit: Option<usize>,
+    pub limit: Option<usize>,
     #[serde(flatten)]
     pub ts: PTimestamp,
 }
